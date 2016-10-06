@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import AccountsUIWrapper from './AccountsUIWrapper.jsx';
+import { createContainer } from 'meteor/react-meteor-data';
 
 //import Task from './Task.jsx';
 
@@ -19,11 +20,17 @@ export default class App extends Component {
   //   ));
   // }
 
+  showLifePoints() {
+    console.log(AppContainer.user)
+      return AppContainer.user;
+  }
+
+
   render() {
     return (
       <div className="container">
         <header>
-          <h1>Welcome to AcroParty!</h1>
+          <h1>Welcome to AcroParty! Life wins is { this.props.currentUser ? <span>{ this.props.currentUser.stats.lifetimePoints }</span> : '' }</h1>
         </header>
         <AccountsUIWrapper />
 
@@ -31,3 +38,14 @@ export default class App extends Component {
     );
   }
 }
+
+// Meteor user data for React
+// App.propTypes = {
+//   currentUser: PropTypes.object,
+// };
+
+export default createContainer(() => {
+  return {
+    currentUser: Meteor.user(),
+  };
+}, App);
