@@ -2,36 +2,39 @@ import React, { Component } from 'react';
 import AccountsUIWrapper from './AccountsUIWrapper.jsx';
 import { createContainer } from 'meteor/react-meteor-data';
 
-//import Task from './Task.jsx';
+import { Rooms } from '../api/rooms.js';
+
+import Room from './Room.jsx';
 
 // App component - represents the whole app
 export default class App extends Component {
-  // getTasks() {
-  //   return [
-  //     { _id: 1, text: 'This is task 1' },
-  //     { _id: 2, text: 'This is task 2' },
-  //     { _id: 3, text: 'This is task 3' },
-  //   ];
-  // }
-
-  // renderTasks() {
-  //   return this.getTasks().map((task) => (
-  //     <Task key={task._id} task={task} />
-  //   ));
-  // }
-
-  showLifePoints() {
-    console.log(AppContainer.user)
-      return AppContainer.user;
+  renderRooms() {
+    return this.props.rooms.map((room) => (
+      <Room key={room._id} room={room} />
+    ));
   }
 
+  renderLifePoints() {
+    // this.props.currentUser ? <span>{ this.props.currentUser.stats.lifetimePoints }</span> : '';
+    if (this.props.currentUser) {
+      if (this.props.currentUser.stats) {
+        return  <span>{ this.props.currentUser.stats.lifetimePoints }</span>;
+      } else {
+        return "";
+      }
+    } else {
+      return "";
+    }
+  }
 
   render() {
     return (
       <div className="container">
         <header>
-          <h1>Welcome to AcroParty! Life wins is { this.props.currentUser ? <span>{ this.props.currentUser.stats.lifetimePoints }</span> : '' }</h1>
+          <h1>Welcome to AcroParty!</h1>
         </header>
+        <div>Life wins is { this.renderLifePoints() }</div>
+        <div>Rooms: { this.renderRooms() }</div>
         <AccountsUIWrapper />
 
       </div>
@@ -39,13 +42,14 @@ export default class App extends Component {
   }
 }
 
-// Meteor user data for React
-// App.propTypes = {
-//   currentUser: PropTypes.object,
-// };
-
 export default createContainer(() => {
   return {
     currentUser: Meteor.user(),
+  };
+}, App);
+
+export default createContainer(() => {
+  return {
+    rooms: Rooms.find({}).fetch(),
   };
 }, App);
