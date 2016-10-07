@@ -34,7 +34,7 @@ export default class App extends Component {
           <h1>Welcome to AcroParty!</h1>
         </header>
         <div>Life wins is { this.renderLifePoints() }</div>
-        <div>Rooms: { this.renderRooms() }</div>
+        <div className="roomList"><div className="roomListTitle">Rooms</div>{ this.renderRooms() }</div>
         <AccountsUIWrapper />
 
       </div>
@@ -45,11 +45,6 @@ export default class App extends Component {
 export default createContainer(() => {
   return {
     currentUser: Meteor.user(),
-  };
-}, App);
-
-export default createContainer(() => {
-  return {
     rooms: Rooms.find({}).fetch(),
   };
 }, App);

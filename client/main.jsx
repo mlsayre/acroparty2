@@ -12,4 +12,5 @@ Meteor.startup(() => {
 Meteor.subscribe("userData");
 
 // DB room setup
-// db.rooms.insert({ room_id: "FamilyRoom", displayName: "Family Room", family: true, round: 0 });
+// db.rooms.insert({ room_id: "FamilyRoom", displayName: "Family Room", family: true, round: 0, players: 0 });
+

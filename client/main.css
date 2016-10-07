@@ -1,1 +1,25 @@
 /* CSS declarations go here */
+li {
+  list-style: none;
+}
+
+.roomList {
+  width: 30%;
+  background-color: lightblue;
+  min-width: 300px;
+  padding: 20px;
+  margin: 0 auto;
+}
+.roomListTitle {
+  text-decoration: underline;
+  text-align: center;
+  margin-bottom: 10px;
+}
+.roomList li {
+  margin-bottom: 8px;
+  display: block;
+}
+.roomlistTitle {
+  width: 100px;
+  margin-left: 10px;
+}
