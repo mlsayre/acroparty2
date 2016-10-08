@@ -8,21 +8,39 @@ import Room from './Room.jsx';
 
 // App component - represents the whole app
 export default class App extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      gameRoomId: "blaaa",
+    };
+  }
+
   userRouting() {
     if (this.props.currentUser) {
       $(".frontSignin").hide();
       $(".mainScreen").show();
     } else {
       $(".frontSignin").show();
+      $(".mainScreen, .stats, .chat, .gamePlay, .settings").hide();
     }
     $(".acroparty").show()
   }
 
   // rooms
+  gotoRoom(e) {
+    var theroom = $(e.target).attr("data-room")
+    this.setState({gameRoomId: theroom});
+    $(".mainScreen, .popup").hide();
+    $(".chat").attr("id", theroom).show();
+  }
   renderRooms() {
     return this.props.rooms.map((room) => (
-      <Room key={room._id} room={room} />
+      <Room key={room._id} room={room} updateRoom={this.gotoRoom.bind(this)}/>
     ));
+  }
+  renderRoomName() {
+    return this.state.gameRoomId
   }
 
   // stats
@@ -33,6 +51,18 @@ export default class App extends Component {
   openStats(e) {
     $(".settings").hide();
     $(".stats").show();
+  }
+
+  renderUsername() {
+    if (this.props.currentUser) {
+      if (this.props.currentUser.username) {
+        return  <span>{ this.props.currentUser.username }</span>;
+      } else {
+        return "";
+      }
+    } else {
+      return "";
+    }
   }
 
   renderLifePoints() {
@@ -68,6 +98,9 @@ export default class App extends Component {
           <header>
             <h1>AcroParty</h1>
           </header>
+          <div className="welcomeText">
+            Welcome, { this.renderUsername() }! Please select a room to start playing...
+          </div>
           <div className="roomList">
             <div className="roomListTitle">Rooms</div>
             { this.renderRooms() }
@@ -79,7 +112,9 @@ export default class App extends Component {
         </section>
 
         <section className="chat">
-
+          This is where chat will happen. This is game room id: {this.renderRoomName()}.
+          <section className="gamePlay">
+          </section>
         </section>
 
         <section className="gamePlay">

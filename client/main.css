@@ -20,7 +20,8 @@ li {
   top: 12px;
   border: 1px solid darkgrey;
   background-color: lightblue;
-  width: 90%;
+  width: 50%;
+  min-width: 300px;
   height: auto;
   padding: 12px;
   left: 0;
@@ -49,6 +50,12 @@ li {
   display: block;
 }
 
+.welcomeText {
+  text-align: center;
+  width: 50%;
+  min-width: 260px;
+  margin: 0 auto 6px;
+}
 .roomList {
   width: 30%;
   background-color: lightblue;
