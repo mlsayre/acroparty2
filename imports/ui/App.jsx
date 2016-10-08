@@ -3,8 +3,10 @@ import AccountsUIWrapper from './AccountsUIWrapper.jsx';
 import { createContainer } from 'meteor/react-meteor-data';
 
 import { Rooms } from '../api/rooms.js';
+import { Chats } from '../api/chats.js';
 
 import Room from './Room.jsx';
+import Chat from './Chat.jsx';
 
 // App component - represents the whole app
 export default class App extends Component {
@@ -12,14 +14,13 @@ export default class App extends Component {
     super(props);
 
     this.state = {
-      gameRoomId: "blaaa",
+      gameRoomId: "",
     };
   }
 
   userRouting() {
     if (this.props.currentUser) {
       $(".frontSignin").hide();
-      $(".mainScreen").show();
     } else {
       $(".frontSignin").show();
       $(".mainScreen, .stats, .chat, .gamePlay, .settings").hide();
@@ -112,13 +113,11 @@ export default class App extends Component {
         </section>
 
         <section className="chat">
-          This is where chat will happen. This is game room id: {this.renderRoomName()}.
           <section className="gamePlay">
           </section>
-        </section>
 
-        <section className="gamePlay">
-
+          This is where chat will happen. This is game room id: {this.renderRoomName()}.
+          <Chat clickStats={this.openStats.bind(this)} clickSettings={this.openSettings.bind(this)}/>
         </section>
 
         <section className="stats popup">
