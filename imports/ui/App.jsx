@@ -35,8 +35,13 @@ export default class App extends Component {
   gotoRoom(e) {
     var theroom = $(e.target).attr("data-room")
     gameRoomIdSelected.set(theroom);
+    var roomToJoin =  Rooms.findOne({ room_id: theroom })
+    Rooms.update(roomToJoin._id, {
+      $addToSet: { players: this.props.currentUser.username },
+    });
     $(".mainScreen, .popup").hide();
     $(".chat").attr("id", theroom).show();
+
   }
   renderRooms() {
     return this.props.rooms.map((room) => (
@@ -53,8 +58,23 @@ export default class App extends Component {
     } else {
       var theRoomName = ""
     }
-
     return theRoomName
+  }
+  roomPlayers() {
+    if (this.props.selectedRoom) {
+      var theRoomPlayers = this.props.selectedRoom.players;
+    } else {
+      var theRoomPlayers = []
+    }
+    return theRoomPlayers
+  }
+  exitRoom(e) {
+    Rooms.update(this.props.selectedRoom._id, { $pull: { players:  this.props.currentUser.username }}, {multi: true})
+    $(".popup").hide();
+    $("#" + gameRoomIdSelected.get()).hide();
+    gameRoomIdSelected.set("");
+    $(".chat").removeAttr("id");
+    $(".mainScreen").show();
   }
 
   // stats
@@ -131,7 +151,7 @@ export default class App extends Component {
 
           This is where chat will happen. This is game room id: {this.renderRoomId()}.
           <Chat clickStats={this.openStats.bind(this)} clickSettings={this.openSettings.bind(this)}
-                roomName={this.roomName()} />
+                roomName={this.roomName()} roomPlayers={this.roomPlayers()} exitRoom={this.exitRoom.bind(this)}/>
         </section>
 
         <section className="stats popup">

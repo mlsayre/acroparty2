@@ -7,8 +7,10 @@ export default class Chat extends Component {
 
       <div className="mainButtons">
         <div>This room name is {this.props.roomName} </div>
+        <div>The players here are {this.props.roomPlayers}</div>
         <button className="mainButton" onClick={this.props.clickStats}>Stats</button>
         <button className="mainButton" onClick={this.props.clickSettings}>Settings</button>
+        <button className="mainButton" onClick={this.props.exitRoom}>Exit Room</button>
       </div>
     );
   }

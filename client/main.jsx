@@ -13,6 +13,7 @@ Meteor.subscribe("userData");
 
 // DB room setup
 // db.rooms.insert({ room_id: "FamilyRoom", displayName: "Family Room", family: true, round: 0, players: [] });
+// db.rooms.insert({ room_id: "HotTub", displayName: "Hot Tub", family: false, round: 0, players: [] });
 
 // DB chat setup
 // db.chats.insert({ })
