@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import AccountsUIWrapper from './AccountsUIWrapper.jsx';
 import { createContainer } from 'meteor/react-meteor-data';
+import { ReactiveVar } from 'meteor/reactive-var';
 
 import { Rooms } from '../api/rooms.js';
 import { Chats } from '../api/chats.js';
@@ -8,15 +9,17 @@ import { Chats } from '../api/chats.js';
 import Room from './Room.jsx';
 import Chat from './Chat.jsx';
 
+var gameRoomIdSelected = new ReactiveVar("");
+
 // App component - represents the whole app
 export default class App extends Component {
-  constructor(props) {
-    super(props);
+  // constructor(props) {
+  //   super(props);
 
-    this.state = {
-      gameRoomId: "",
-    };
-  }
+  //   this.state = {
+  //     gameRoomId: "",
+  //   };
+  // }
 
   userRouting() {
     if (this.props.currentUser) {
@@ -31,7 +34,7 @@ export default class App extends Component {
   // rooms
   gotoRoom(e) {
     var theroom = $(e.target).attr("data-room")
-    this.setState({gameRoomId: theroom});
+    gameRoomIdSelected.set(theroom);
     $(".mainScreen, .popup").hide();
     $(".chat").attr("id", theroom).show();
   }
@@ -40,8 +43,18 @@ export default class App extends Component {
       <Room key={room._id} room={room} updateRoom={this.gotoRoom.bind(this)}/>
     ));
   }
-  renderRoomName() {
-    return this.state.gameRoomId
+  renderRoomId() {
+    return gameRoomIdSelected.get();
+    // return this.props.currentUser.currentRoom
+  }
+  roomName() {
+    if (this.props.selectedRoom) {
+      var theRoomName = this.props.selectedRoom.displayName;
+    } else {
+      var theRoomName = ""
+    }
+
+    return theRoomName
   }
 
   // stats
@@ -116,8 +129,9 @@ export default class App extends Component {
           <section className="gamePlay">
           </section>
 
-          This is where chat will happen. This is game room id: {this.renderRoomName()}.
-          <Chat clickStats={this.openStats.bind(this)} clickSettings={this.openSettings.bind(this)}/>
+          This is where chat will happen. This is game room id: {this.renderRoomId()}.
+          <Chat clickStats={this.openStats.bind(this)} clickSettings={this.openSettings.bind(this)}
+                roomName={this.roomName()} />
         </section>
 
         <section className="stats popup">
@@ -137,9 +151,11 @@ export default class App extends Component {
 }
 
 export default createContainer(() => {
+  //var userRoom = Meteor.user().currentRoom;
   return {
     currentUser: Meteor.user(),
     rooms: Rooms.find({}).fetch(),
+    selectedRoom: Rooms.findOne({ room_id: gameRoomIdSelected.get() }),
   };
 }, App);
 

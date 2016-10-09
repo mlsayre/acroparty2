@@ -2,6 +2,7 @@ import { Accounts } from 'meteor/accounts-base';
 
 Accounts.onCreateUser((options, user) => {
 
+  user.currentRoom = "";
   user.stats = {
     lifetimePoints : 0,
     lifetimeWins : 0,
@@ -17,7 +18,7 @@ Accounts.onCreateUser((options, user) => {
 Meteor.publish("userData", function () {
   if (this.userId) {
     return Meteor.users.find({_id: this.userId},
-                             {fields: {'stats': 1}});
+                             {fields: {'stats': 1, 'currentRoom': 1}});
   } else {
     this.ready();
   }

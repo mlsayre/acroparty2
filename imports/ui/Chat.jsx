@@ -6,6 +6,7 @@ export default class Chat extends Component {
     return (
 
       <div className="mainButtons">
+        <div>This room name is {this.props.roomName} </div>
         <button className="mainButton" onClick={this.props.clickStats}>Stats</button>
         <button className="mainButton" onClick={this.props.clickSettings}>Settings</button>
       </div>
@@ -13,8 +14,8 @@ export default class Chat extends Component {
   }
 }
 
-Chat.propTypes = {
+// Chat.propTypes = {
   // This component gets the room to display through a React prop.
   // We can use propTypes to indicate it is required
-  chat: PropTypes.object.isRequired,
-};
+//   chat: PropTypes.object.isRequired,
+// };

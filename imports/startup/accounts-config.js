@@ -5,7 +5,6 @@ Accounts.ui.config({
 });
 
 Accounts.onLogin(function(user){
-    console.log('hi');
     $(".mainScreen").show();
     //App.showPrivate();
 });
