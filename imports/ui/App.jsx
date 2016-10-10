@@ -143,7 +143,8 @@ export default class App extends Component {
 
           This is where chat will happen. This is game room id: {this.renderRoomId()}.
           <Chat clickStats={this.openStats.bind(this)} clickSettings={this.openSettings.bind(this)}
-                roomName={this.roomName()} roomPlayers={this.roomPlayers()} exitRoom={this.exitRoom.bind(this)}/>
+                roomName={this.roomName()} roomPlayers={this.roomPlayers()} exitRoom={this.exitRoom.bind(this)}
+                  roomPlayersKey={this.roomPlayers().id}/>
         </section>
 
         <section className="stats popup">

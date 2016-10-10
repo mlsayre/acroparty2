@@ -1,12 +1,30 @@
 import React, { Component, PropTypes } from 'react';
 
-// Room component - represents a single room item
+export default class ListItemPlayer extends Component {
+  render() {
+    return <li>{this.props.data}</li>;
+  }
+}
+
 export default class Chat extends Component {
+  listPlayers() {
+    var playerListArray = this.props.roomPlayers
+    var playerListItems = playerListArray.map(function(name) {
+      return <li>name</li>
+    });
+    return playerListItems
+  }
+
+
   render() {
     return (
       <div className="chatArea">
         <div className="playerList">
-          {this.props.roomPlayers}
+          <ul><u>Players</u>
+            {this.props.roomPlayers.map((name) => (
+              <ListItemPlayer key={name._id} data={name} />
+            ))}
+          </ul>
         </div>
         <div className="messagesArea">
           <div className="messagesRead">

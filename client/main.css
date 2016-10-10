@@ -93,6 +93,10 @@ li {
   width: 20vw;
   height: 40vw;
 }
+.playerList ul {
+  margin: 4px;
+  padding: 0;
+}
 .messagesArea {
   display: inline-block;
   vertical-align: top;
