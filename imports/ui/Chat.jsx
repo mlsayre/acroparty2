@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 
 export default class ListItemPlayer extends Component {
   render() {
+
     return <li>{this.props.data}</li>;
   }
 }
@@ -19,12 +20,19 @@ export default class Chat extends Component {
   render() {
     return (
       <div className="chatArea">
-        <div className="playerList">
-          <ul><u>Players</u>
-            {this.props.roomPlayers.map((name) => (
-              <ListItemPlayer key={name._id} data={name} />
-            ))}
-          </ul>
+        <div className="listAndInfo">
+          <div className="playerList">
+            <ul><u>Players</u>
+              {this.props.roomPlayers.map((name) => (
+                <ListItemPlayer key={name} data={name} />
+              ))}
+            </ul>
+          </div>
+          <div className="chatMenuButtons">
+            <button className="mainButton" onClick={this.props.clickStats}>Stats</button>
+            <button className="mainButton" onClick={this.props.clickSettings}>Settings</button>
+            <button className="mainButton" onClick={this.props.exitRoom}>Exit Room</button>
+          </div>
         </div>
         <div className="messagesArea">
           <div className="messagesRead">
@@ -36,11 +44,6 @@ export default class Chat extends Component {
             <button className="messageSend">Send</button>
             <button className="mobile openChatMenu">Menu</button>
           </div>
-        </div>
-        <div className="chatMenuButtons">
-          <button className="mainButton" onClick={this.props.clickStats}>Stats</button>
-          <button className="mainButton" onClick={this.props.clickSettings}>Settings</button>
-          <button className="mainButton" onClick={this.props.exitRoom}>Exit Room</button>
         </div>
       </div>
     );

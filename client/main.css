@@ -83,15 +83,19 @@ li {
 }
 
 /* chat room */
-.playerList {
+.listAndInfo {
   display: inline-block;
+  height: 40vw;
+  width: 20vw;
+}
+.playerList {
+  display: block;
   vertical-align: top;
   border: 2px solid grey;
   border-radius: 4px;
   margin: 6px 3px;
-  min-width: 150px;
-  width: 20vw;
-  height: 40vw;
+  width: 98%;
+  height: 30vw;
 }
 .playerList ul {
   margin: 4px;
@@ -100,9 +104,9 @@ li {
 .messagesArea {
   display: inline-block;
   vertical-align: top;
-  margin: 6px 3px;
+  margin: 6px 1vw;
   min-width: 350px;
-  width: 55vw;
+  width: 58vw;
   height: 40vw;
 }
 .messagesRead {
@@ -117,6 +121,6 @@ li {
   height: 40vw;
 }
 .chatMenuButtons .mainButton {
-  display: block;
+  display: inline-block;
   margin: 0 0 6px 3px;
 }
