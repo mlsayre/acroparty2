@@ -2,6 +2,11 @@
 li {
   list-style: none;
 }
+@media (min-width: 641px) {
+  .mobile {
+    display: none;
+  }
+}
 
 .acroparty, .frontSignin, .mainScreen, .stats, .chat, .gamePlay, .settings {
   display: none;
@@ -75,4 +80,39 @@ li {
 .roomlistTitle {
   width: 100px;
   margin-left: 10px;
+}
+
+/* chat room */
+.playerList {
+  display: inline-block;
+  vertical-align: top;
+  border: 2px solid grey;
+  border-radius: 4px;
+  margin: 6px 3px;
+  min-width: 150px;
+  width: 20vw;
+  height: 40vw;
+}
+.messagesArea {
+  display: inline-block;
+  vertical-align: top;
+  margin: 6px 3px;
+  min-width: 350px;
+  width: 55vw;
+  height: 40vw;
+}
+.messagesRead {
+  height: 92%;
+  border: 2px solid grey;
+  border-radius: 4px;
+}
+.chatMenuButtons {
+  display: inline-block;
+  margin: 6px 3px;
+  vertical-align: middle;
+  height: 40vw;
+}
+.chatMenuButtons .mainButton {
+  display: block;
+  margin: 0 0 6px 3px;
 }

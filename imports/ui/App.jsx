@@ -13,13 +13,6 @@ var gameRoomIdSelected = new ReactiveVar("");
 
 // App component - represents the whole app
 export default class App extends Component {
-  // constructor(props) {
-  //   super(props);
-
-  //   this.state = {
-  //     gameRoomId: "",
-  //   };
-  // }
 
   userRouting() {
     if (this.props.currentUser) {
@@ -41,7 +34,6 @@ export default class App extends Component {
     });
     $(".mainScreen, .popup").hide();
     $(".chat").attr("id", theroom).show();
-
   }
   renderRooms() {
     return this.props.rooms.map((room) => (
