@@ -3,6 +3,7 @@ import { Meteor } from 'meteor/meteor';
 import { render } from 'react-dom';
 
 import '../imports/startup/accounts-config.js';
+import './utilities.js';
 import App from '../imports/ui/App.jsx';
 
 Meteor.startup(() => {
@@ -15,5 +16,4 @@ Meteor.subscribe("userData");
 // db.rooms.insert({ room_id: "FamilyRoom", displayName: "Family Room", family: true, round: 0, players: [] });
 // db.rooms.insert({ room_id: "HotTub", displayName: "Hot Tub", family: false, round: 0, players: [] });
 
-// DB chat setup
-// db.chats.insert({ })
+

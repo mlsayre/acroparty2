@@ -6,8 +6,15 @@ import { gameRoomIdSelected } from './App.jsx'
 import { Messages } from '../api/messages.js';
 
 export default class ListMessages extends Component {
+  componentDidMount() {
+    var $this = $(ReactDOM.findDOMNode(this));
+    $(".messagesRead")[0].scrollTop = $(".messagesRead")[0].scrollHeight;
+  }
   render() {
     return <li>{this.props.author}: {this.props.message}</li>;
+    // if ($(".messagesRead")[0]) {
+    //       $(".messagesRead")[0].scrollTop = $(".messagesRead")[0].scrollHeight;
+    //     }
   }
 }
 
@@ -27,7 +34,6 @@ export default class Chat extends Component {
   }
 
   sendMessage(event) {
-    console.log(gameRoomIdSelected.get())
     event.preventDefault();
     const message = ReactDOM.findDOMNode(this.refs.messageInput).value.trim();
     Messages.insert({
@@ -39,7 +45,6 @@ export default class Chat extends Component {
   }
 
   renderMessages() {
-    console.log(this.props.roomMessages)
     if (this.props.roomMessages) {
       return this.props.roomMessages.map((message) => (
         <ListMessages key={message._id} author={message.user_id} message={message.message} />
@@ -48,13 +53,17 @@ export default class Chat extends Component {
       return "";
     }
   }
-
+  // keyDown(event) {
+  //   console.log(event)
+  //   if (event.keyCode == 13) { {this.sendMessage.bind(this)}; return false;}
+  // }
 
   render() {
     return (
       <div className="chatArea">
         <div className="listAndInfo">
           <div className="playerList">
+            <div className="bigRoomName"><span>{this.props.roomName}</span></div>
             <ul><u>Players</u>
               {this.props.roomPlayers.map((name) => (
                 <ListItemPlayer key={name} data={name} />
@@ -69,7 +78,6 @@ export default class Chat extends Component {
         </div>
         <div className="messagesArea">
           <div className="messagesRead">
-            <div className="bigRoomName"><span>{this.props.roomName}</span></div>
             {this.renderMessages()}
           </div>
           <div className="messagesSendArea">
@@ -93,6 +101,6 @@ export default class Chat extends Component {
 export default createContainer(() => {
   return {
     currentUser: Meteor.user(),
-    roomMessages: Messages.find({ room_id: gameRoomIdSelected.get() }, { sort: { createdAt: -1 } }).fetch(),
+    roomMessages: Messages.find({ room_id: gameRoomIdSelected.get() }, { sort: { createdAt: 1 } }).fetch(),
   };
 }, Chat);
