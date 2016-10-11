@@ -1,8 +1,18 @@
 import React, { Component, PropTypes } from 'react';
+import ReactDOM from 'react-dom';
+import { createContainer } from 'meteor/react-meteor-data';
+import { gameRoomIdSelected } from './App.jsx'
+
+import { Messages } from '../api/messages.js';
+
+export default class ListMessages extends Component {
+  render() {
+    return <li>{this.props.author}: {this.props.message}</li>;
+  }
+}
 
 export default class ListItemPlayer extends Component {
   render() {
-
     return <li>{this.props.data}</li>;
   }
 }
@@ -14,6 +24,29 @@ export default class Chat extends Component {
       return <li>name</li>
     });
     return playerListItems
+  }
+
+  sendMessage(event) {
+    console.log(gameRoomIdSelected.get())
+    event.preventDefault();
+    const message = ReactDOM.findDOMNode(this.refs.messageInput).value.trim();
+    Messages.insert({
+      user_id: this.props.currentUser.username,
+      room_id: gameRoomIdSelected.get(),
+      message: message,
+      createdAt: new Date() });
+    ReactDOM.findDOMNode(this.refs.messageInput).value = '';
+  }
+
+  renderMessages() {
+    console.log(this.props.roomMessages)
+    if (this.props.roomMessages) {
+      return this.props.roomMessages.map((message) => (
+        <ListMessages key={message._id} author={message.user_id} message={message.message} />
+      ));
+    } else {
+      return "";
+    }
   }
 
 
@@ -36,12 +69,13 @@ export default class Chat extends Component {
         </div>
         <div className="messagesArea">
           <div className="messagesRead">
-            <div>This room name is {this.props.roomName} </div>
+            <div className="bigRoomName"><span>{this.props.roomName}</span></div>
+            {this.renderMessages()}
           </div>
           <div className="messagesSendArea">
             <button className="mobile openPlayerList">Plyrs</button>
-            <input type="text" className="messageEnter"></input>
-            <button className="messageSend">Send</button>
+            <input type="text" ref="messageInput" className="messageEnter"></input>
+            <button className="messageSend" onClick={this.sendMessage.bind(this)}>Send</button>
             <button className="mobile openChatMenu">Menu</button>
           </div>
         </div>
@@ -55,3 +89,10 @@ export default class Chat extends Component {
   // We can use propTypes to indicate it is required
 //   chat: PropTypes.object.isRequired,
 // };
+
+export default createContainer(() => {
+  return {
+    currentUser: Meteor.user(),
+    roomMessages: Messages.find({ room_id: gameRoomIdSelected.get() }, { sort: { createdAt: -1 } }).fetch(),
+  };
+}, Chat);

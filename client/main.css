@@ -83,6 +83,10 @@ li {
 }
 
 /* chat room */
+.chatArea {
+  width: 80vw;
+  margin: 0 auto;
+}
 .listAndInfo {
   display: inline-block;
   height: 40vw;
@@ -110,9 +114,19 @@ li {
   height: 40vw;
 }
 .messagesRead {
+  position: relative;
   height: 92%;
   border: 2px solid grey;
   border-radius: 4px;
+}
+.bigRoomName {
+  font-size: 34px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  background-color: rgba(230,230,230,.78);
+  padding: 0 6px 2px;
+  color: rgba(20,0,240,.9);
 }
 .chatMenuButtons {
   display: inline-block;

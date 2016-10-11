@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import AccountsUIWrapper from './AccountsUIWrapper.jsx';
 import { createContainer } from 'meteor/react-meteor-data';
 import { ReactiveVar } from 'meteor/reactive-var';
+export var gameRoomIdSelected = new ReactiveVar("");
 
 import { Rooms } from '../api/rooms.js';
 import { Chats } from '../api/chats.js';
@@ -9,7 +10,7 @@ import { Chats } from '../api/chats.js';
 import Room from './Room.jsx';
 import Chat from './Chat.jsx';
 
-var gameRoomIdSelected = new ReactiveVar("");
+
 
 // App component - represents the whole app
 export default class App extends Component {
@@ -144,7 +145,7 @@ export default class App extends Component {
           This is where chat will happen. This is game room id: {this.renderRoomId()}.
           <Chat clickStats={this.openStats.bind(this)} clickSettings={this.openSettings.bind(this)}
                 roomName={this.roomName()} roomPlayers={this.roomPlayers()} exitRoom={this.exitRoom.bind(this)}
-                  roomPlayersKey={this.roomPlayers().id}/>
+                roomId={this.renderRoomId()} />
         </section>
 
         <section className="stats popup">
