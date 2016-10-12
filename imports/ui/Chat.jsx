@@ -13,7 +13,7 @@ export default class ListMessages extends Component {
   render() {
     return <li>
             <span className="authorMessage"><span className="messageAuthor">{this.props.author}:</span> {this.props.message}</span>
-            <span className="messageTime">{this.props.timestamp}</span>
+            <span className="messageTime" data-livestamp={this.props.timestamp}></span>
            </li>
   }
 }
@@ -48,7 +48,7 @@ export default class Chat extends Component {
     if (this.props.roomMessages) {
       return this.props.roomMessages.map((message) => (
         <ListMessages key={message._id} author={message.user_id} message={message.message}
-                      timestamp={moment(message.createdAt).fromNow()} />
+                      timestamp={message.createdAt} />
       ));
     } else {
       return "";
