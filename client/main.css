@@ -1,4 +1,7 @@
 /* CSS declarations go here */
+body {
+  font-family: 'Roboto', sans-serif;
+}
 li {
   list-style: none;
 }
@@ -118,6 +121,25 @@ li {
   border: 2px solid grey;
   border-radius: 4px;
   overflow-y: auto;
+}
+.messagesRead li {
+  width: 98%;
+  margin: 0 auto;
+  position: relative;
+}
+.authorMessage {
+  width: 83%;
+  display: block;
+}
+.messageAuthor {
+  color: green;
+}
+.messageTime {
+  position: absolute;
+  font-size: 10px;
+  vertical-align: baseline;
+  right: 1%;
+  bottom: 4px;
 }
 .bigRoomName {
   font-size: 16px;

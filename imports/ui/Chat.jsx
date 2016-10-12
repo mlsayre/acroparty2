@@ -11,10 +11,10 @@ export default class ListMessages extends Component {
     $(".messagesRead")[0].scrollTop = $(".messagesRead")[0].scrollHeight;
   }
   render() {
-    return <li>{this.props.author}: {this.props.message}</li>;
-    // if ($(".messagesRead")[0]) {
-    //       $(".messagesRead")[0].scrollTop = $(".messagesRead")[0].scrollHeight;
-    //     }
+    return <li>
+            <span className="authorMessage"><span className="messageAuthor">{this.props.author}:</span> {this.props.message}</span>
+            <span className="messageTime">{this.props.timestamp}</span>
+           </li>
   }
 }
 
@@ -47,7 +47,8 @@ export default class Chat extends Component {
   renderMessages() {
     if (this.props.roomMessages) {
       return this.props.roomMessages.map((message) => (
-        <ListMessages key={message._id} author={message.user_id} message={message.message} />
+        <ListMessages key={message._id} author={message.user_id} message={message.message}
+                      timestamp={moment(message.createdAt).fromNow()} />
       ));
     } else {
       return "";
@@ -82,8 +83,10 @@ export default class Chat extends Component {
           </div>
           <div className="messagesSendArea">
             <button className="mobile openPlayerList">Plyrs</button>
-            <input type="text" ref="messageInput" className="messageEnter"></input>
-            <button className="messageSend" onClick={this.sendMessage.bind(this)}>Send</button>
+            <form onSubmit={this.sendMessage.bind(this)}>
+              <input type="text" ref="messageInput" className="messageEnter"></input>
+              <button className="messageSend" onClick={this.sendMessage.bind(this)}>Send</button>
+            </form>
             <button className="mobile openChatMenu">Menu</button>
           </div>
         </div>
