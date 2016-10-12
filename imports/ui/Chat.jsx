@@ -42,6 +42,18 @@ export default class Chat extends Component {
       message: message,
       createdAt: new Date() });
     ReactDOM.findDOMNode(this.refs.messageInput).value = '';
+    // delete old messages in room
+    if (this.props.roomMessages.length > 200) { // 200 chat messages per room
+      var indexToTrim = this.props.roomMessages.length - 200;
+      var oldestMessageTime = this.props.roomMessages[indexToTrim].createdAt;
+      var messagesToDelete = Messages.find({
+        room_id : gameRoomIdSelected.get(),
+        createdAt: { $lt: oldestMessageTime }
+      }).fetch();
+      messagesToDelete.forEach(function(message) {
+        Messages.remove({ _id : message._id});
+      });
+    }
   }
 
   renderMessages() {
