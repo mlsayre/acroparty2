@@ -6,6 +6,7 @@ export var gameRoomIdSelected = new ReactiveVar("");
 
 import { Rooms } from '../api/rooms.js';
 import { Chats } from '../api/chats.js';
+import { Messages } from '../api/messages.js';
 
 import Room from './Room.jsx';
 import Chat from './Chat.jsx';
@@ -35,6 +36,18 @@ export default class App extends Component {
     });
     $(".mainScreen, .popup").hide();
     $(".chat").attr("id", theroom).show();
+    var enteringRoomVerb = [" appears in the ", " saunters into the ", " walks into the ", " struts into the ",
+                            " sprints into the ", " apparates into the ", " materializes in the ",
+                            " mysteriously arises inside the ", " seems to have entered our ",
+                            " ridiculously enters the ", " crashed through the window into the ",
+                            " is suddenly in the ", " scoots on in to the ", " politely enters the "]
+    var randomVerb = enteringRoomVerb[Math.floor(Math.random() * enteringRoomVerb.length)]
+    Messages.insert({
+      user_id: "<PartyHost>",
+      room_id: gameRoomIdSelected.get(),
+      message: this.props.currentUser.username + randomVerb +
+                Rooms.findOne({ room_id: gameRoomIdSelected.get() }).displayName + "...",
+      createdAt: new Date() });
   }
   renderRooms() {
     return this.props.rooms.map((room) => (

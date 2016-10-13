@@ -11,7 +11,7 @@ export default class ListMessages extends Component {
     $(".messagesRead")[0].scrollTop = $(".messagesRead")[0].scrollHeight;
   }
   render() {
-    return <li>
+    return <li className={this.props.author === "<PartyHost>" ? "hostMessage" : ""}>
             <span className="authorMessage"><span className="messageAuthor">{this.props.author}:</span> {this.props.message}</span>
             <span className="messageTime" data-livestamp={this.props.timestamp}></span>
            </li>
@@ -66,10 +66,6 @@ export default class Chat extends Component {
       return "";
     }
   }
-  // keyDown(event) {
-  //   console.log(event)
-  //   if (event.keyCode == 13) { {this.sendMessage.bind(this)}; return false;}
-  // }
 
   render() {
     return (
