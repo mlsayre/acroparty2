@@ -36,11 +36,8 @@ export default class Chat extends Component {
   sendMessage(event) {
     event.preventDefault();
     const message = ReactDOM.findDOMNode(this.refs.messageInput).value.trim();
-    Messages.insert({
-      user_id: this.props.currentUser.username,
-      room_id: gameRoomIdSelected.get(),
-      message: message,
-      createdAt: new Date() });
+    if (message === "") {return} // blank messages don't send
+    Meteor.call('messages.postMessage', this.props.currentUser.username, gameRoomIdSelected.get(), message);
     ReactDOM.findDOMNode(this.refs.messageInput).value = '';
     // delete old messages in room
     if (this.props.roomMessages.length > 200) { // 200 chat messages per room
@@ -51,7 +48,7 @@ export default class Chat extends Component {
         createdAt: { $lt: oldestMessageTime }
       }).fetch();
       messagesToDelete.forEach(function(message) {
-        Messages.remove({ _id : message._id});
+        Meteor.call('message.deleteOld', message._id);
       });
     }
   }

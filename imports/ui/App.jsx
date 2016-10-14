@@ -31,9 +31,7 @@ export default class App extends Component {
     var theroom = $(e.target).attr("data-room")
     gameRoomIdSelected.set(theroom);
     var roomToJoin =  Rooms.findOne({ room_id: theroom })
-    Rooms.update(roomToJoin._id, {
-      $addToSet: { players: this.props.currentUser.username },
-    });
+    Meteor.call('rooms.addPlayer', roomToJoin._id, this.props.currentUser.username)
     $(".mainScreen, .popup").hide();
     $(".chat").attr("id", theroom).show();
     var enteringRoomVerb = [" appears in the ", " saunters into the ", " walks into the ", " struts into the ",
@@ -42,12 +40,8 @@ export default class App extends Component {
                             " ridiculously enters the ", " crashed through the window into the ",
                             " is suddenly in the ", " scoots on in to the ", " politely enters the "]
     var randomVerb = enteringRoomVerb[Math.floor(Math.random() * enteringRoomVerb.length)]
-    Messages.insert({
-      user_id: "<PartyHost>",
-      room_id: gameRoomIdSelected.get(),
-      message: this.props.currentUser.username + randomVerb +
-                Rooms.findOne({ room_id: gameRoomIdSelected.get() }).displayName + "...",
-      createdAt: new Date() });
+    Meteor.call('messages.msgPlayer', gameRoomIdSelected.get(), this.props.currentUser.username, randomVerb,
+      Rooms.findOne({ room_id: gameRoomIdSelected.get() }).displayName + "...")
   }
   renderRooms() {
     return this.props.rooms.map((room) => (
@@ -75,7 +69,7 @@ export default class App extends Component {
     return theRoomPlayers
   }
   exitRoom(e) {
-    Rooms.update(this.props.selectedRoom._id, { $pull: { players:  this.props.currentUser.username }}, {multi: true})
+    Meteor.call('rooms.removePlayer', this.props.selectedRoom._id, this.props.currentUser.username)
     $(".popup").hide();
     $("#" + gameRoomIdSelected.get()).hide();
     gameRoomIdSelected.set("");
