@@ -11,7 +11,7 @@ li {
   }
 }
 
-.acroparty, .frontSignin, .mainScreen, .stats, .chat, .gamePlay, .settings {
+.acroparty, .frontSignin, .mainScreen, .stats, .chat, .settings {
   display: none;
 }
 .frontSignin {

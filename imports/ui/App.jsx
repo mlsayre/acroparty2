@@ -7,9 +7,11 @@ export var gameRoomIdSelected = new ReactiveVar("");
 import { Rooms } from '../api/rooms.js';
 import { Chats } from '../api/chats.js';
 import { Messages } from '../api/messages.js';
+import { Games } from '../api/games.js';
 
 import Room from './Room.jsx';
 import Chat from './Chat.jsx';
+import Game from './Game.jsx';
 
 
 
@@ -21,7 +23,7 @@ export default class App extends Component {
       $(".frontSignin").hide();
     } else {
       $(".frontSignin").show();
-      $(".mainScreen, .stats, .chat, .gamePlay, .settings").hide();
+      $(".mainScreen, .stats, .chat, .settings").hide();
     }
     $(".acroparty").show()
   }
@@ -147,6 +149,7 @@ export default class App extends Component {
 
         <section className="chat">
           <section className="gamePlay">
+            <Game />
           </section>
 
           This is where chat will happen. This is game room id: {this.renderRoomId()}.
