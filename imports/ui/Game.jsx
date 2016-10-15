@@ -7,8 +7,22 @@ import Room from './Room.jsx';
 
 export default class Game extends Component {
   render() {
-    return ( <div>{this.props.selectedRoom && this.props.selectedRoom.players.length > 1 ?
-      "<div>THERE IS MORE THAN ONE PLAYER HERE!</div>" : "<div>This is the game area!</div>"}</div>
+    return (
+      <div>
+        <div className="gamestate waitingForPlayers">
+          <span>Waiting for at least 3 players...</span>
+        </div>
+        <div className="gamestate getReady">
+        </div>
+        <div className="gamestate play">
+        </div>
+        <div className="gamestate vote">
+        </div>
+        <div className="gamestate results">
+        </div>
+      </div>
+      // <div>{this.props.selectedRoom && this.props.selectedRoom.players.length > 1 ?
+      // <div>THERE IS MORE THAN ONE PLAYER HERE.</div> : <div>This is the game area.</div>}</div>
     );
   }
 }

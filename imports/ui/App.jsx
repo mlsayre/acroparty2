@@ -149,10 +149,9 @@ export default class App extends Component {
 
         <section className="chat">
           <section className="gamePlay">
-            <Game />
+            <Game roomId={this.renderRoomId()} roomName={this.roomName()} />
           </section>
 
-          This is where chat will happen. This is game room id: {this.renderRoomId()}.
           <Chat clickStats={this.openStats.bind(this)} clickSettings={this.openSettings.bind(this)}
                 roomName={this.roomName()} roomPlayers={this.roomPlayers()} exitRoom={this.exitRoom.bind(this)}
                 roomId={this.renderRoomId()} />

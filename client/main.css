@@ -86,6 +86,9 @@ li {
 }
 
 /* chat room */
+.chat {
+  height: 98vh;
+}
 .chatArea {
   width: 80vw;
   margin: 0 auto;
@@ -102,7 +105,8 @@ li {
   border-radius: 4px;
   margin: 6px 3px;
   width: 98%;
-  height: 30vw;
+  max-height: 34vh;
+  min-height: 28vh;
 }
 .playerList ul {
   margin: 4px;
@@ -114,7 +118,7 @@ li {
   margin: 6px 1vw;
   min-width: 350px;
   width: 58vw;
-  height: 40vw;
+  height: 46vh;
 }
 .messagesRead {
   height: 92%;
@@ -126,19 +130,25 @@ li {
   width: 100%;
   margin: 0 auto;
   position: relative;
-  padding: 4px 0 3px;
+  padding: 3px 0 1px;
 }
 .hostMessage {
   background-color: lightgreen;
-  font-style: italic;
   font-size: 100%;
   font-family: 'Pompiere', cursive;
   padding: 5px 0 1px;
+}
+.hostMessage .authorMessage {
+  font-size: 17px;
+}
+.hostMessage .messageTime {
+  font-size: 12px;
 }
 .authorMessage {
   width: 83%;
   display: block;
   margin-left: 3px;
+  font-size: 15px;
 }
 .messageAuthor {
   color: green;
@@ -149,6 +159,9 @@ li {
   vertical-align: baseline;
   right: 1%;
   bottom: 4px;
+}
+input.messageEnter {
+  width: 85%;
 }
 .bigRoomName {
   font-size: 20px;
@@ -169,4 +182,11 @@ li {
 .chatMenuButtons .mainButton {
   display: inline-block;
   margin: 0 0 6px 3px;
+}
+
+/* game area */
+.gamePlay {
+  width: 85vw;
+  height:46vh;
+  margin: 1vh auto;
 }

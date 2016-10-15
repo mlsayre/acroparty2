@@ -20,7 +20,7 @@ export default class ListMessages extends Component {
 
 export default class ListItemPlayer extends Component {
   render() {
-    return <li>{this.props.data}</li>;
+    return <li className="playerInList" data-playerInList={this.props.data}>{this.props.data}</li>;
   }
 }
 
@@ -89,7 +89,7 @@ export default class Chat extends Component {
           <div className="messagesSendArea">
             <button className="mobile openPlayerList">Plyrs</button>
             <form onSubmit={this.sendMessage.bind(this)}>
-              <input type="text" ref="messageInput" className="messageEnter"></input>
+              <input type="text" ref="messageInput" className="messageEnter" placeholder="Enter chat here..."></input>
               <button className="messageSend" onClick={this.sendMessage.bind(this)}>Send</button>
             </form>
             <button className="mobile openChatMenu">Menu</button>
