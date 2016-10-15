@@ -161,7 +161,7 @@ li {
   bottom: 4px;
 }
 input.messageEnter {
-  width: 85%;
+  width: 80%;
 }
 .bigRoomName {
   font-size: 20px;
@@ -189,4 +189,7 @@ input.messageEnter {
   width: 85vw;
   height:46vh;
   margin: 1vh auto;
+}
+.gamestate {
+  display: none;
 }

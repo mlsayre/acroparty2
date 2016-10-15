@@ -7,6 +7,20 @@ import Room from './Room.jsx';
 
 export default class Game extends Component {
   render() {
+    if (this.props.selectedRoom) {
+      if (this.props.selectedRoom.players.length < 2) { // number of players needed to start game
+        if (this.props.selectedRoom.subround === "Waiting for players") {
+          $(".gamestate").hide();
+          $(".waitingForPlayers").show();
+        }
+      } else {
+        $(".waitingForPlayers").hide();
+        if (this.props.selectedRoom.subround === "Waiting for players") {
+          console.log("games.init should be called")
+          Meteor.call('games.init', gameRoomIdSelected.get(), );
+        }
+      }
+    }
     return (
       <div>
         <div className="gamestate waitingForPlayers">
