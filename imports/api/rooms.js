@@ -13,8 +13,8 @@ Meteor.methods({
 
   'rooms.removePlayer'(roomId, playerRemoving) {
     Rooms.update(roomId, {
-      $pull: { players:  playerRemoving }},
-      {multi: true})
+      $pull: { players:  playerRemoving
+    }}, {multi: true})
   }
 
 })
