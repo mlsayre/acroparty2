@@ -1,6 +1,7 @@
 /* CSS declarations go here */
 body {
   font-family: 'Roboto', sans-serif;
+  margin: 0;
 }
 li {
   list-style: none;
@@ -95,7 +96,6 @@ li {
 }
 .listAndInfo {
   display: inline-block;
-  height: 40vw;
   width: 20vw;
 }
 .playerList {
@@ -177,7 +177,6 @@ input.messageEnter {
   display: inline-block;
   margin: 6px 3px;
   vertical-align: middle;
-  height: 40vw;
 }
 .chatMenuButtons .mainButton {
   display: inline-block;

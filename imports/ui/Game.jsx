@@ -11,12 +11,12 @@ export default class Game extends Component {
     if (this.props.selectedRoom) {
       var currentRound = this.props.selectedRoom.round;
       var currentSubround = this.props.selectedRoom.subround;
-      if (this.props.selectedRoom.players.length < 2) { // number of players needed to start game
-        if (currentSubround === "Waiting for players") {
+      if (currentSubround === "Waiting for players") {
+        if (this.props.selectedRoom.players.length < 2) { // number of players needed to start game
           $(".gamestate").hide();
           $(".waitingForPlayers").show();
         } else {
-          Meteor.call
+          Meteor.call('games.init', gameRoomIdSelected.get(), );
         }
       } else {
         $(".gamestate").hide();

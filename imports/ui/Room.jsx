@@ -6,6 +6,7 @@ export default class Room extends Component {
     return (<li><button className="roomSelect" data-room={this.props.room.room_id} onClick={this.props.updateRoom}>Join</button>
         <span className="roomlistTitle">{this.props.room.displayName}</span>
         <span className="roomlistRound"> Rnd: {this.props.room.round}</span>
+        <span className="roomlistSubround"> ({this.props.room.subround})</span>
         <span className="roomlistPlayers"> Players: {this.props.room.players.length}</span></li>
     );
   }
