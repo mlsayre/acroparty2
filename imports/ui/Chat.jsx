@@ -40,15 +40,15 @@ export default class Chat extends Component {
     Meteor.call('messages.postMessage', this.props.currentUser.username, gameRoomIdSelected.get(), message);
     ReactDOM.findDOMNode(this.refs.messageInput).value = '';
     // delete old messages in room
-    if (this.props.roomMessages.length > 200) { // 200 chat messages per room
-      var indexToTrim = this.props.roomMessages.length - 200;
+    if (this.props.roomMessages.length > 150) { // 200 chat messages per room
+      var indexToTrim = this.props.roomMessages.length - 150;
       var oldestMessageTime = this.props.roomMessages[indexToTrim].createdAt;
       var messagesToDelete = Messages.find({
         room_id : gameRoomIdSelected.get(),
         createdAt: { $lt: oldestMessageTime }
       }).fetch();
       messagesToDelete.forEach(function(message) {
-        Meteor.call('message.deleteOld', message._id);
+        Meteor.call('messages.deleteOld', message._id);
       });
     }
   }

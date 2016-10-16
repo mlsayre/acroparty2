@@ -15,6 +15,8 @@ export default class Game extends Component {
         if (currentSubround === "Waiting for players") {
           $(".gamestate").hide();
           $(".waitingForPlayers").show();
+        } else {
+          Meteor.call
         }
       } else {
         $(".gamestate").hide();
