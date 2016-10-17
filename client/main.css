@@ -192,3 +192,80 @@ input.messageEnter {
 .gamestate {
   display: none;
 }
+.waitingForPlayers div {
+  text-align: center;
+  padding: 10% 0 0;
+  font-size: 26px;
+}
+.gameTop {
+  width: 100%;
+  padding: 2% 0 0;
+}
+.roundInfo {
+  display: inline-block;
+  font-size: 26px;
+  width: 47%;
+  text-align: left;
+  padding-left: 3%;
+}
+.gameTimer {
+  display: inline-block;
+  width: 45%;
+  padding-right: 5%;
+  text-align: right;
+  font-size: 32px;
+  vertical-align: top;
+}
+.gameMiddle {
+  width: 100%;
+  padding: 3% 0 0;
+}
+.getReadyText {
+  text-align: center;
+  font-size: 30px;
+}
+.numberSubmitted, .categoryAndLetters, .submittedInfo {
+  display: inline-block;
+  vertical-align: top;
+}
+.numberSubmitted {
+  width: 20%;
+  margin-right: 5%;
+  text-align: center;
+  font-size: 14px;
+}
+.categoryAndLetters {
+  width: 50%;
+  text-align: center;
+}
+.submittedInfo {
+  width: 25%;
+  text-align: center;
+}
+.catWord {
+  color: black;
+  font-size: 14px;
+  font-style: normal;
+}
+.currentCat {
+  color: red;
+  font-size: 20px;
+  font-style: italic;
+}
+.currentLetters {
+  font-size: 88px;
+  color: blue;
+  font-weight: 700;
+  margin: 2% 0 4%;
+}
+.gameBottom {
+  text-align: center;
+}
+input.answerEnter {
+  width: 50vw;
+  font-size: 22px;
+  min-width: 290px;
+}
+button.answerSend {
+  font-size: 22px;
+}

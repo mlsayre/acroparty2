@@ -49,14 +49,43 @@ export default class Game extends Component {
     return (
       <div>
         <div className="gamestate waitingForPlayers">
-          <span>Waiting for at least 3 players...</span>
+          <div>Waiting for at least 3 players...</div>
         </div>
         <div className="gamestate getReady">
-          Get ready to play...
+          <div className="gameTop">
+            <div className="roundInfo">
+              Round {this.props.selectedRoom ? this.props.selectedRoom.round : ""} of&nbsp;
+              {this.props.gameInfo ? this.props.gameInfo.roundletters.length : ""}
+            </div>
+            <div className="gameTimer"></div>
+          </div>
+          <div className="gameMiddle">
+            <div className="getReadyText">Get ready...</div>
+          </div>
         </div>
         <div className="gamestate play">
-          Letters: {this.props.gameInfo ? this.props.gameInfo.roundletters[currentRound - 1] : ""}
-          Category: {this.props.gameInfo ? this.props.gameInfo.roundcategories[currentRound - 1] : ""}
+          <div className="gameTop">
+            <div className="roundInfo">
+              Round {this.props.selectedRoom ? this.props.selectedRoom.round : ""} of&nbsp;
+              {this.props.gameInfo ? this.props.gameInfo.roundletters.length : ""}
+            </div>
+            <div className="gameTimer">50</div>
+          </div>
+          <div className="gameMiddle">
+            <div className="numberSubmitted">0 of 3 Answers Submitted</div>
+            <div className="categoryAndLetters">
+              <div className="currentCat"><span className="catWord">Category:</span> {this.props.gameInfo ? this.props.gameInfo.roundcategories[currentRound - 1] : ""}</div>
+              <div className="currentLetters">{this.props.gameInfo ? this.props.gameInfo.roundletters[currentRound - 1] : ""}</div>
+            </div>
+            <div className="submittedInfo">Submitted: 24.57s</div>
+          </div>
+          <div className="gameBottom">
+            <form>
+              <input type="text" ref="answerInput" className="answerEnter" placeholder="Enter acro here..."></input>
+              <button className="answerSend">Play</button>
+            </form>
+          </div>
+
         </div>
         <div className="gamestate vote">
           Now vote!
