@@ -65,8 +65,8 @@ Meteor.methods({
             $set: { subround: "Play" },
           });
         }
+        readyTimer = null;
       }, 7000);
-      readyTimer = null;
     }
   },
 
@@ -80,8 +80,8 @@ Meteor.methods({
             $set: { subround: "Vote" },
           });
         }
+        playTimer = null
       }, (roundtime * 1000) + 20000);
-      playTimer = null;
     }
   },
 
@@ -95,8 +95,8 @@ Meteor.methods({
             $set: { subround: "Results" },
           });
         }
+        voteTimer = null;
       }, 35000);
-      voteTimer = null;
     }
   },
 
@@ -112,6 +112,7 @@ Meteor.methods({
               $set: { subround: "Final results" },
             });
           }
+          resultsTimer = null;
         }, 22000);
       } else {
         var resultsTimer = Meteor.setTimeout(function() {
@@ -123,9 +124,9 @@ Meteor.methods({
                       subround: "Get ready" },
             });
           }
+          resultsTimer = null;
         }, 22000);
       }
-      resultsTimer = null;
     }
   },
 
@@ -138,9 +139,9 @@ Meteor.methods({
           Games.remove({ room_id: roomId });
           Meteor.call('games.init', roomId );
         }
+        finalTimer = null;
       }, 25000);
     }
-    finalTimer = null;
   },
 
   'games.reset'(roomId) {

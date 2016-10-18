@@ -115,6 +115,6 @@ export default createContainer(() => {
   return {
     currentUser: Meteor.user(),
     roomMessages: Messages.find({ room_id: gameRoomIdSelected.get() }, { sort: { createdAt: 1 } }).fetch(),
-    roomPlayers: Gamedata.find({ room_id: gameRoomIdSelected.get() }).fetch()
+    roomPlayers: Gamedata.find({ room_id: gameRoomIdSelected.get() }, {sort: { score: -1 } }).fetch()
   };
 }, Chat);

@@ -13,6 +13,7 @@ export default class Game extends Component {
       var currentRound = this.props.selectedRoom.round;
       var currentSubround = this.props.selectedRoom.subround;
       if (currentSubround === "Waiting for players") {
+        console.log(this.props.gamedata.length)
         if (this.props.gamedata.length < 2) { // number of players needed to start game
           $(".gamestate").hide();
           $(".waitingForPlayers").show();
@@ -20,6 +21,7 @@ export default class Game extends Component {
           Meteor.call('games.init', gameRoomIdSelected.get(), );
         }
       } else {
+        console.log(this.props.gamedata.length)
         $(".gamestate").hide();
         if (currentSubround === "Waiting for players") {
           Meteor.call('games.init', gameRoomIdSelected.get(), );
