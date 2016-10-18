@@ -4,6 +4,7 @@ import { gameRoomIdSelected } from './App.jsx'
 
 import { Rooms } from '../api/rooms.js';
 import { Games } from '../api/games.js';
+import { Gamedata } from '../api/gamedata.js';
 import Room from './Room.jsx';
 
 export default class Game extends Component {
@@ -12,7 +13,7 @@ export default class Game extends Component {
       var currentRound = this.props.selectedRoom.round;
       var currentSubround = this.props.selectedRoom.subround;
       if (currentSubround === "Waiting for players") {
-        if (this.props.selectedRoom.players.length < 2) { // number of players needed to start game
+        if (this.props.gamedata.length < 2) { // number of players needed to start game
           $(".gamestate").hide();
           $(".waitingForPlayers").show();
         } else {
@@ -108,7 +109,8 @@ export default createContainer(() => {
   return {
     currentUser: Meteor.user(),
     selectedRoom: Rooms.findOne({ room_id: gameRoomIdSelected.get() }),
-    gameInfo: Games.findOne({room_id: gameRoomIdSelected.get()}) ? Games.findOne({room_id: gameRoomIdSelected.get()}) : ""
+    gameInfo: Games.findOne({room_id: gameRoomIdSelected.get()}) ? Games.findOne({room_id: gameRoomIdSelected.get()}) : "",
+    gamedata: Gamedata.find({room_id: gameRoomIdSelected.get()}).fetch()
   };
 }, Game);
 

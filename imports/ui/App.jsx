@@ -8,6 +8,7 @@ import { Rooms } from '../api/rooms.js';
 import { Chats } from '../api/chats.js';
 import { Messages } from '../api/messages.js';
 import { Games } from '../api/games.js';
+import { Gamedata } from '../api/gamedata.js';
 
 import Room from './Room.jsx';
 import Chat from './Chat.jsx';
@@ -33,7 +34,7 @@ export default class App extends Component {
     var theroom = $(e.target).attr("data-room")
     gameRoomIdSelected.set(theroom);
     var roomToJoin =  Rooms.findOne({ room_id: theroom })
-    Meteor.call('rooms.addPlayer', roomToJoin._id, this.props.currentUser.username)
+    Meteor.call('rooms.addPlayer', gameRoomIdSelected.get(), this.props.currentUser.username)
     $(".mainScreen, .popup").hide();
     $(".chat").attr("id", theroom).show();
     var enteringRoomVerb = [" appears in the ", " saunters into the ", " walks into the ", " struts into the ",
@@ -47,12 +48,11 @@ export default class App extends Component {
   }
   renderRooms() {
     return this.props.rooms.map((room) => (
-      <Room key={room._id} room={room} updateRoom={this.gotoRoom.bind(this)}/>
+      <Room key={room._id} room={room} updateRoom={this.gotoRoom.bind(this)} />
     ));
   }
   renderRoomId() {
     return gameRoomIdSelected.get();
-    // return this.props.currentUser.currentRoom
   }
   roomName() {
     if (this.props.selectedRoom) {
@@ -62,16 +62,9 @@ export default class App extends Component {
     }
     return theRoomName
   }
-  roomPlayers() {
-    if (this.props.selectedRoom) {
-      var theRoomPlayers = this.props.selectedRoom.players;
-    } else {
-      var theRoomPlayers = []
-    }
-    return theRoomPlayers
-  }
+
   exitRoom(e) {
-    Meteor.call('rooms.removePlayer', this.props.selectedRoom._id, this.props.currentUser.username)
+    Meteor.call('rooms.removePlayer', this.props.selectedRoom.room_id, this.props.currentUser.username)
     $(".popup").hide();
     $("#" + gameRoomIdSelected.get()).hide();
     gameRoomIdSelected.set("");
@@ -153,7 +146,7 @@ export default class App extends Component {
           </section>
 
           <Chat clickStats={this.openStats.bind(this)} clickSettings={this.openSettings.bind(this)}
-                roomName={this.roomName()} roomPlayers={this.roomPlayers()} exitRoom={this.exitRoom.bind(this)}
+                roomName={this.roomName()} exitRoom={this.exitRoom.bind(this)}
                 roomId={this.renderRoomId()} />
         </section>
 
@@ -179,6 +172,7 @@ export default createContainer(() => {
     currentUser: Meteor.user(),
     rooms: Rooms.find({}).fetch(),
     selectedRoom: Rooms.findOne({ room_id: gameRoomIdSelected.get() }),
+    gamedata: Gamedata.find({}).fetch()
   };
 }, App);
 

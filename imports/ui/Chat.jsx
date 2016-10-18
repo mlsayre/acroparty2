@@ -4,6 +4,7 @@ import { createContainer } from 'meteor/react-meteor-data';
 import { gameRoomIdSelected } from './App.jsx'
 
 import { Messages } from '../api/messages.js';
+import { Gamedata } from '../api/gamedata.js';
 
 export default class ListMessages extends Component {
   componentDidMount() {
@@ -20,13 +21,17 @@ export default class ListMessages extends Component {
 
 export default class ListItemPlayer extends Component {
   render() {
-    return <li className="playerInList" data-playerInList={this.props.data}>{this.props.data}</li>;
+    return <li className="playerInList" data-playerInList={this.props.name}>{this.props.name}
+    <span className="scoresRight">{this.props.score}</span></li>;
   }
 }
 
 export default class Chat extends Component {
   listPlayers() {
-    var playerListArray = this.props.roomPlayers
+    var playerListArray = [];
+    this.props.roomPlayers.forEach(function() {
+      playerListArray.push(this.user_id)
+    })
     var playerListItems = playerListArray.map(function(name) {
       return <li>name</li>
     });
@@ -70,9 +75,9 @@ export default class Chat extends Component {
         <div className="listAndInfo">
           <div className="playerList">
             <div className="bigRoomName"><span>{this.props.roomName}</span></div>
-            <ul><u>Players</u>
-              {this.props.roomPlayers.map((name) => (
-                <ListItemPlayer key={name} data={name} />
+            <ul className="playerNameList"><u>Players</u><span className="scoresRight"><u>Scores</u></span>
+              {this.props.roomPlayers.map((player) => (
+                <ListItemPlayer key={player.user_id} name={player.user_id} score={player.score} />
               ))}
             </ul>
           </div>
@@ -110,5 +115,6 @@ export default createContainer(() => {
   return {
     currentUser: Meteor.user(),
     roomMessages: Messages.find({ room_id: gameRoomIdSelected.get() }, { sort: { createdAt: 1 } }).fetch(),
+    roomPlayers: Gamedata.find({ room_id: gameRoomIdSelected.get() }).fetch()
   };
 }, Chat);

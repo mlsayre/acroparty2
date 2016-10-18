@@ -98,6 +98,9 @@ li {
   display: inline-block;
   width: 20vw;
 }
+ul.playerNameList {
+  position: relative;
+}
 .playerList {
   display: block;
   vertical-align: top;
@@ -111,6 +114,10 @@ li {
 .playerList ul {
   margin: 4px;
   padding: 0;
+}
+span.scoresRight {
+  position: absolute;
+  right: 0;
 }
 .messagesArea {
   display: inline-block;
