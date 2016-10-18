@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import { createContainer } from 'meteor/react-meteor-data';
 import { gameRoomIdSelected } from './App.jsx'
+import '../client/utilities.js';
 
 import { Rooms } from '../api/rooms.js';
 import { Games } from '../api/games.js';
@@ -8,6 +9,28 @@ import { Gamedata } from '../api/gamedata.js';
 import Room from './Room.jsx';
 
 export default class Game extends Component {
+  sendAnswer(event) {
+    event.preventDefault();
+    const answer = ReactDOM.findDOMNode(this.refs.answerInput).value.trim();
+    const roundNumber = Rooms.findOne({room_id: gameRoomIdSelected.get()}).fetch().round;
+    const acroLetters = Games.findOne({room_id: gameRoomIdSelected.get()}).fetch().roundletters[roundNumber - 1];
+    if (answer === "") {return} // blank messages don't send
+    Meteor.call('gamedata.postMessage', this.props.currentUser.username, gameRoomIdSelected.get(), message);
+    ReactDOM.findDOMNode(this.refs.messageInput).value = '';
+    // delete old messages in room
+    if (this.props.roomMessages.length > 150) { // 200 chat messages per room
+      var indexToTrim = this.props.roomMessages.length - 150;
+      var oldestMessageTime = this.props.roomMessages[indexToTrim].createdAt;
+      var messagesToDelete = Messages.find({
+        room_id : gameRoomIdSelected.get(),
+        createdAt: { $lt: oldestMessageTime }
+      }).fetch();
+      messagesToDelete.forEach(function(message) {
+        Meteor.call('messages.deleteOld', message._id);
+      });
+    }
+  }
+
   render() {
     if (this.props.selectedRoom) {
       var currentRound = this.props.selectedRoom.round;
@@ -84,8 +107,9 @@ export default class Game extends Component {
           </div>
           <div className="gameBottom">
             <form>
-              <input type="text" ref="answerInput" className="answerEnter" placeholder="Enter acro here..."></input>
-              <button className="answerSend">Play</button>
+              <input type="text" ref="answerInput" className="answerEnter" placeholder="Enter acro here..."
+                maxlength="70"></input>
+              <button className="answerSend" onClick={this.sendAnswer.bind(this)}>Play</button>
             </form>
           </div>
 

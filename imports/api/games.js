@@ -106,6 +106,7 @@ Meteor.methods({
       if (currentRound === roundsToPlay) {
         var resultsTimer = Meteor.setTimeout(function() {
           if (Gamedata.find({room_id: roomId}).fetch().length < 2) { // end game after results if not enough players
+            resultsTimer = null;
             Meteor.call('games.reset', roomId );
           } else {
             Rooms.update({room_id: roomId}, {
@@ -117,6 +118,7 @@ Meteor.methods({
       } else {
         var resultsTimer = Meteor.setTimeout(function() {
           if (Gamedata.find({room_id: roomId}).fetch().length < 2) { // end game after results if not enough players
+            resultsTimer = null;
             Meteor.call('games.reset', roomId );
           } else {
             Rooms.update({room_id: roomId}, {
@@ -134,6 +136,7 @@ Meteor.methods({
     if (!finalTimer) { // one timer only
       var finalTimer = Meteor.setTimeout(function() {
         if (Gamedata.find({room_id: roomId}).fetch().length < 2) { // end game after results if not enough players
+          finalTimer = null;
           Meteor.call('games.reset', roomId );
         } else { // set up for new game
           Games.remove({ room_id: roomId });
@@ -146,6 +149,7 @@ Meteor.methods({
 
   'games.reset'(roomId) {
     Games.remove({ room_id: roomId });
+    Gamedata.remove({ room_id: roomId });
     Rooms.update({room_id: roomId}, {
       $set: { round: 0,
               subround: "Waiting for players" },
