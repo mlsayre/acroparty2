@@ -1,33 +1,41 @@
 import React, { Component, PropTypes } from 'react';
+import ReactDOM from 'react-dom';
 import { createContainer } from 'meteor/react-meteor-data';
 import { gameRoomIdSelected } from './App.jsx'
-import '../client/utilities.js';
+import {validateAnswer} from '/client/utilities.js';
 
 import { Rooms } from '../api/rooms.js';
 import { Games } from '../api/games.js';
 import { Gamedata } from '../api/gamedata.js';
 import Room from './Room.jsx';
 
+var playBeginTime
+var submitAnswerTime
 export default class Game extends Component {
   sendAnswer(event) {
     event.preventDefault();
     const answer = ReactDOM.findDOMNode(this.refs.answerInput).value.trim();
-    const roundNumber = Rooms.findOne({room_id: gameRoomIdSelected.get()}).fetch().round;
-    const acroLetters = Games.findOne({room_id: gameRoomIdSelected.get()}).fetch().roundletters[roundNumber - 1];
-    if (answer === "") {return} // blank messages don't send
-    Meteor.call('gamedata.postMessage', this.props.currentUser.username, gameRoomIdSelected.get(), message);
-    ReactDOM.findDOMNode(this.refs.messageInput).value = '';
-    // delete old messages in room
-    if (this.props.roomMessages.length > 150) { // 200 chat messages per room
-      var indexToTrim = this.props.roomMessages.length - 150;
-      var oldestMessageTime = this.props.roomMessages[indexToTrim].createdAt;
-      var messagesToDelete = Messages.find({
-        room_id : gameRoomIdSelected.get(),
-        createdAt: { $lt: oldestMessageTime }
-      }).fetch();
-      messagesToDelete.forEach(function(message) {
-        Meteor.call('messages.deleteOld', message._id);
-      });
+    const roundNumber = Rooms.findOne({room_id: gameRoomIdSelected.get()}).round;
+    const acroLetters = Games.findOne({room_id: gameRoomIdSelected.get()}).roundletters[roundNumber - 1];
+    var checkedAnswer = validateAnswer(answer, acroLetters);
+    if (checkedAnswer === 1) {
+      var failMessage = "Not feeling inspired?"
+      $(".submittedInfo").css("color", "red");
+      $(".submittedInfo").text(failMessage)
+    } else if (checkedAnswer === 2) {
+      var failMessage = "Your acro should have " + acroLetters.length + " words..."
+      $(".submittedInfo").css("color", "red");
+      $(".submittedInfo").text(failMessage)
+    } else if (checkedAnswer === 3) {
+      var failMessage = "Check your letters..."
+      $(".submittedInfo").css("color", "red");
+      $(".submittedInfo").text(failMessage)
+    } else {
+      submitAnswerTime = new Date();
+      submitTime = (submitAnswerTime - playBeginTime) / 1000;
+      $(".submittedInfo").css("color", "green");
+      $(".submittedInfo").text("Submitted: " + submitTime+ "s");
+      Meteor.call('gamedata.postAnswer', gameRoomIdSelected.get(), this.props.currentUser.username, checkedAnswer, submitTime);
     }
   }
 
@@ -54,7 +62,13 @@ export default class Game extends Component {
           Meteor.call('games.getready', gameRoomIdSelected.get(), );
         } else if (currentSubround === "Play") {
           $(".gamestate").hide();
+          $(".answerEnter").value = "";
+          $(".submittedInfo").text("")
           $(".play").show();
+          setTimeout(function() {
+            console.log("start answering")
+            playBeginTime = new Date();
+          }, 3000)
           var roundSeconds = this.props.gameInfo.roundtimes[currentRound - 1];
           Meteor.call('games.play', gameRoomIdSelected.get(), roundSeconds);
         } else if (currentSubround === "Vote") {
@@ -103,12 +117,12 @@ export default class Game extends Component {
               <div className="currentCat"><span className="catWord">Category:</span> {this.props.gameInfo ? this.props.gameInfo.roundcategories[currentRound - 1] : ""}</div>
               <div className="currentLetters">{this.props.gameInfo ? this.props.gameInfo.roundletters[currentRound - 1] : ""}</div>
             </div>
-            <div className="submittedInfo">Submitted: 24.57s</div>
+            <div className="submittedInfo"></div>
           </div>
           <div className="gameBottom">
             <form>
               <input type="text" ref="answerInput" className="answerEnter" placeholder="Enter acro here..."
-                maxlength="70"></input>
+                maxLength="70"></input>
               <button className="answerSend" onClick={this.sendAnswer.bind(this)}>Play</button>
             </form>
           </div>

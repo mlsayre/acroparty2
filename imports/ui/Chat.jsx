@@ -95,7 +95,7 @@ export default class Chat extends Component {
             <button className="mobile openPlayerList">Plyrs</button>
             <form onSubmit={this.sendMessage.bind(this)}>
               <input type="text" ref="messageInput" className="messageEnter" placeholder="Enter chat here..."
-                maxlength="100"></input>
+                maxLength="100"></input>
               <button className="messageSend" onClick={this.sendMessage.bind(this)}>Send</button>
             </form>
             <button className="mobile openChatMenu">Menu</button>

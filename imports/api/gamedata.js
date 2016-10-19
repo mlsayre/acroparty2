@@ -6,11 +6,12 @@ import { Rooms } from '../api/rooms.js';
 export const Gamedata = new Mongo.Collection('gamedata');
 
 Meteor.methods({
-  // 'rooms.addPlayer'(roomId, playerAdding) {
-  //   Rooms.update(roomId, {
-  //     $addToSet: { players: [playerAdding, 0] },
-  //   });
-  // },
+  'gamedata.postAnswer'(roomId, userId, answer, answerTime) {
+    Gamedata.update({room_id: roomId, user_id: userId}, {
+      $set: { answer: answer,
+              answerTime: answerTime },
+    });
+  },
 
   // 'rooms.removePlayer'(roomId, playerRemoving) {
   //   Rooms.update(roomId, {
