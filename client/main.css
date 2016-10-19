@@ -216,7 +216,7 @@ input.messageEnter {
   padding-left: 3%;
 }
 .gameTimer {
-  display: inline-block;
+  display: none;
   width: 45%;
   padding-right: 5%;
   text-align: right;

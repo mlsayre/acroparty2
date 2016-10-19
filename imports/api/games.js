@@ -25,6 +25,12 @@ acroCategories = ["General", "Sports", "Food", "Movies", "Television", "History"
 roundsToPlay = 8;
 roundTimes = [50, 60, 60, 80, 50, 60, 60 ,80]
 roundAcroLength = [3, 4, 5, 6, 3, 4, 5, 6]
+readyTimer = {}
+playTimer = {}
+playStartTimer = {}
+voteTimer = {}
+resultsTimer = {}
+finalTimer = {}
 
 
 ////////////
@@ -95,14 +101,19 @@ Meteor.methods({
       playStartTimer[roomId] = Meteor.setTimeout(function() {
         var countdownStartTime = new Date();
         Games.update({room_id: roomId}, {
-          $set: { playStartTime:countdownStartTime }
+          $set: { playStartTime:countdownStartTime,
+                  playStartAnswering: true }
         })
+
       }, 16000)
     }
   },
 
   'games.vote'(roomId) {
     delete playStartTimer[roomId]
+    Games.update({room_id: roomId}, {
+      $set: { playStartAnswering: false }
+    })
     if (!voteTimer[roomId]) { // one timer only
       voteTimer[roomId] = Meteor.setTimeout(function() {
         if (Gamedata.find({room_id: roomId}).fetch().length === 0) {

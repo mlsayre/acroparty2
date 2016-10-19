@@ -17,3 +17,27 @@ export function validateAnswer(answer, acroletters) {
   }
   return theAnswer
 }
+
+export function timer(seconds, container) {
+  $("." + container).text(":" + seconds);
+  $("." + container).css("display", "inline-block");
+
+  setTimeout(function() {
+    var count = seconds;
+    var counter = setInterval(tock, 1000);
+
+    function tock() {
+      count=count-1;
+      if (count <= 0) {
+         clearInterval(counter);
+         playtimerflag = "notrunning"
+         return;
+      }
+
+      $("." + container).text(":" + count);
+      if (count < 6) {
+        $("." + container).css("color", "red");
+      }
+    }
+  }, 4000);
+}
