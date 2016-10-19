@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import { createContainer } from 'meteor/react-meteor-data';
 import { gameRoomIdSelected } from './App.jsx'
 import {validateAnswer} from '/client/utilities.js';
-import {timer} from '/client/utilities.js';
 
 import { Rooms } from '../api/rooms.js';
 import { Games } from '../api/games.js';
@@ -39,7 +38,6 @@ export default class Game extends Component {
 
   render() {
     if (this.props.selectedRoom) {
-      timerObj = {}
       var currentRound = this.props.selectedRoom.round;
       var currentSubround = this.props.selectedRoom.subround;
       if (currentSubround === "Waiting for players") {
@@ -59,23 +57,18 @@ export default class Game extends Component {
           $(".getReady").show();
           $(".submittedInfo").text("")
           $(".answerEnter").value = "";
-          delete timerObj["play"];
           Meteor.call('games.getready', gameRoomIdSelected.get(), );
         } else if (currentSubround === "Play") {
           $(".gamestate").hide();
           $(".play").show();
           var roundSeconds = this.props.gameInfo.roundtimes[currentRound - 1];
           Meteor.call('games.play', gameRoomIdSelected.get(), roundSeconds);
-          if (Games.findOne({room_id: gameRoomIdSelected.get()}).playStartAnswering === true) {
-            if (!timerObj["play"]) {
-              timerObj["play"] = function(){timer(roundSeconds, "gameTimer")};
-              timerObj["play"]();
-            }
+          if (this.props.gameInfo.playStartAnswering === true) {
+            $(".gameTimer").css("visibility", "visible");
           } else {
-            $(".gameTimer").hide();
+            $(".gameTimer").css("visibility", "hidden");
           }
         } else if (currentSubround === "Vote") {
-          delete timerObj["play"];
           $(".gamestate").hide();
           $(".vote").show();
           Meteor.call('games.vote', gameRoomIdSelected.get());
@@ -113,7 +106,7 @@ export default class Game extends Component {
               Round {this.props.selectedRoom ? this.props.selectedRoom.round : ""} of&nbsp;
               {this.props.gameInfo ? this.props.gameInfo.roundletters.length : ""}
             </div>
-            <div className="gameTimer"></div>
+            <div className="gameTimer">{this.props.gameInfo ? this.props.gameInfo.timerSeconds : 0}</div>
           </div>
           <div className="gameMiddle">
             <div className="numberSubmitted">0 of 3 Answers Submitted</div>

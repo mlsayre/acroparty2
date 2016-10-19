@@ -99,12 +99,11 @@ Meteor.methods({
     }
     if (!playStartTimer[roomId]) {
       playStartTimer[roomId] = Meteor.setTimeout(function() {
-        var countdownStartTime = new Date();
         Games.update({room_id: roomId}, {
-          $set: { playStartTime:countdownStartTime,
-                  playStartAnswering: true }
+          $set: { playStartAnswering: true,
+                  timerSeconds: roundtime }
         })
-
+        timer(roundtime, roomId, "playtimerstate");
       }, 16000)
     }
   },
@@ -194,9 +193,35 @@ Meteor.methods({
     resultsTimer = {}
   }
 
-
-
-
 })
+
+function timer(seconds, roomId, statetoactivate) {
+
+  Meteor.setTimeout(function() {
+    var countdownStartTime = new Date();
+    if (statetoactivate === "playtimerstate") {
+      Games.update({room_id: roomId}, {
+        $set: { playStartTime:countdownStartTime }
+      })
+    } else {
+      Games.update({room_id: roomId}, {
+        $set: { voteStartTime:countdownStartTime }
+      })
+    }
+    var count = seconds;
+    var counter = Meteor.setInterval(tock, 1000);
+
+    function tock() {
+      count=count-1;
+      if (count <= 0) {
+         Meteor.clearInterval(counter);
+         return;
+      }
+      Games.update({room_id: roomId}, {
+        $set: { timerSeconds: count }
+      })
+    }
+  }, 2000);
+}
 
     // Games.find({ room_id: roomId }).remove({});
