@@ -9,8 +9,6 @@ import { Games } from '../api/games.js';
 import { Gamedata } from '../api/gamedata.js';
 import Room from './Room.jsx';
 
-var playBeginTime
-var submitAnswerTime
 export default class Game extends Component {
   sendAnswer(event) {
     event.preventDefault();
@@ -31,11 +29,10 @@ export default class Game extends Component {
       $(".submittedInfo").css("color", "red");
       $(".submittedInfo").text(failMessage)
     } else {
-      submitAnswerTime = new Date();
-      submitTime = (submitAnswerTime - playBeginTime) / 1000;
       $(".submittedInfo").css("color", "green");
-      $(".submittedInfo").text("Submitted: " + submitTime+ "s");
-      Meteor.call('gamedata.postAnswer', gameRoomIdSelected.get(), this.props.currentUser.username, checkedAnswer, submitTime);
+      Meteor.call('gamedata.postAnswer', gameRoomIdSelected.get(), this.props.currentUser.username, checkedAnswer);
+      var submitTime = Gamedata.findOne({room_id: gameRoomIdSelected.get(), user_id: this.props.currentUser.username}).finalAnswerTime
+      $(".submittedInfo").text("Submitted: " + submitTime + "s");
     }
   }
 
@@ -59,16 +56,12 @@ export default class Game extends Component {
         } else if (currentSubround === "Get ready") {
           $(".gamestate").hide();
           $(".getReady").show();
+          $(".submittedInfo").text("")
+          $(".answerEnter").value = "";
           Meteor.call('games.getready', gameRoomIdSelected.get(), );
         } else if (currentSubround === "Play") {
           $(".gamestate").hide();
-          $(".answerEnter").value = "";
-          $(".submittedInfo").text("")
           $(".play").show();
-          setTimeout(function() {
-            console.log("start answering")
-            playBeginTime = new Date();
-          }, 3000)
           var roundSeconds = this.props.gameInfo.roundtimes[currentRound - 1];
           Meteor.call('games.play', gameRoomIdSelected.get(), roundSeconds);
         } else if (currentSubround === "Vote") {
@@ -150,7 +143,7 @@ export default createContainer(() => {
     currentUser: Meteor.user(),
     selectedRoom: Rooms.findOne({ room_id: gameRoomIdSelected.get() }),
     gameInfo: Games.findOne({room_id: gameRoomIdSelected.get()}) ? Games.findOne({room_id: gameRoomIdSelected.get()}) : "",
-    gamedata: Gamedata.find({room_id: gameRoomIdSelected.get()}).fetch()
+    gamedata: Gamedata.find({room_id: gameRoomIdSelected.get()}).fetch(),
   };
 }, Game);
 

@@ -25,17 +25,19 @@ acroCategories = ["General", "Sports", "Food", "Movies", "Television", "History"
 roundsToPlay = 8;
 roundTimes = [50, 60, 60, 80, 50, 60, 60 ,80]
 roundAcroLength = [3, 4, 5, 6, 3, 4, 5, 6]
-readyTimer = {}
-playTimer = {}
-voteTimer = {}
-resultsTimer = {}
-finalTimer = {}
+
 
 ////////////
 
 Meteor.methods({
   'games.init'(roomId) {
     if (Games.find({ room_id: roomId }).fetch().length === 0) { //always make sure updates only happen once
+      readyTimer = {}
+      playTimer = {}
+      playStartTimer = {}
+      voteTimer = {}
+      resultsTimer = {}
+      finalTimer = {}
       var roundletters;
       var acroPoolLength = acroLettersPool.length;
       var catPoolLength = acroCategories.length;
@@ -89,9 +91,18 @@ Meteor.methods({
         delete playTimer[roomId];
       }, (roundtime * 1000) + 20000);
     }
+    if (!playStartTimer[roomId]) {
+      playStartTimer[roomId] = Meteor.setTimeout(function() {
+        var countdownStartTime = new Date();
+        Games.update({room_id: roomId}, {
+          $set: { playStartTime:countdownStartTime }
+        })
+      }, 16000)
+    }
   },
 
   'games.vote'(roomId) {
+    delete playStartTimer[roomId]
     if (!voteTimer[roomId]) { // one timer only
       voteTimer[roomId] = Meteor.setTimeout(function() {
         if (Gamedata.find({room_id: roomId}).fetch().length === 0) {
@@ -151,6 +162,11 @@ Meteor.methods({
         delete finalTimer[roomId];
       }, 25000);
     }
+    readyTimer = {}
+    playTimer = {}
+    playStartTimer = {}
+    voteTimer = {}
+    resultsTimer = {}
   },
 
   'games.reset'(roomId) {
@@ -160,6 +176,11 @@ Meteor.methods({
       $set: { round: 0,
               subround: "Waiting for players" },
     });
+    readyTimer = {}
+    playTimer = {}
+    playStartTimer = {}
+    voteTimer = {}
+    resultsTimer = {}
   }
 
 
