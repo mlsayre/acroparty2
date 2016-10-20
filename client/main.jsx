@@ -5,6 +5,7 @@ import { moment } from 'meteor/momentjs:moment';
 
 import '../imports/startup/accounts-config.js';
 import './utilities.js';
+import './morphext.min.js';
 import App from '../imports/ui/App.jsx';
 
 Meteor.startup(() => {

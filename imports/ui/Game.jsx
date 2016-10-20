@@ -59,6 +59,14 @@ export default class Game extends Component {
           $(".answerEnter").value = "";
           Meteor.call('games.getready', gameRoomIdSelected.get(), );
         } else if (currentSubround === "Play") {
+          $(".currentLetters").Morphext({
+            animation: "flipInY", // Overrides default "bounceIn"
+            separator: "", // Overrides default ","
+            speed: 1000, // Overrides default 2000
+            complete: function () {
+                // Overrides default empty function
+            }
+          });
           $(".gamestate").hide();
           $(".play").show();
           var roundSeconds = this.props.gameInfo.roundtimes[currentRound - 1];
@@ -67,6 +75,11 @@ export default class Game extends Component {
             $(".gameTimer").css("visibility", "visible");
           } else {
             $(".gameTimer").css("visibility", "hidden");
+          }
+          if (this.props.gameInfo.showAnswerForm === true) {
+            $(".answerForm").css("visibility", "visible");
+          } else {
+            $(".answerForm").css("visibility", "hidden").val("");
           }
         } else if (currentSubround === "Vote") {
           $(".gamestate").hide();
@@ -117,7 +130,7 @@ export default class Game extends Component {
             <div className="submittedInfo"></div>
           </div>
           <div className="gameBottom">
-            <form>
+            <form className="answerForm">
               <input type="text" ref="answerInput" className="answerEnter" placeholder="Enter acro here..."
                 maxLength="70"></input>
               <button className="answerSend" onClick={this.sendAnswer.bind(this)}>Play</button>

@@ -201,7 +201,8 @@ function timer(seconds, roomId, statetoactivate) {
     var countdownStartTime = new Date();
     if (statetoactivate === "playtimerstate") {
       Games.update({room_id: roomId}, {
-        $set: { playStartTime:countdownStartTime }
+        $set: { playStartTime:countdownStartTime,
+                showAnswerForm: true }
       })
     } else {
       Games.update({room_id: roomId}, {
@@ -213,8 +214,11 @@ function timer(seconds, roomId, statetoactivate) {
 
     function tock() {
       count=count-1;
-      if (count <= 0) {
+      if (count < 0) {
          Meteor.clearInterval(counter);
+         Games.update({room_id: roomId}, {
+            $set: { showAnswerForm: false }
+          })
          return;
       }
       Games.update({room_id: roomId}, {

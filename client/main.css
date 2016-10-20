@@ -269,6 +269,9 @@ input.messageEnter {
 .gameBottom {
   text-align: center;
 }
+.answerForm {
+  visibility: hidden;
+}
 input.answerEnter {
   width: 50vw;
   font-size: 22px;
