@@ -12,7 +12,8 @@ export default class ListMessages extends Component {
     $(".messagesRead")[0].scrollTop = $(".messagesRead")[0].scrollHeight;
   }
   render() {
-    return <li className={this.props.author === "<PartyHost>" ? "hostMessage" : ""}>
+    return <li className={(this.props.author === "<PartyHost>" ? "hostMessage" : "") +
+            (this.props.exitClass ? " " + this.props.exitClass : "")}>
             <span className="authorMessage"><span className="messageAuthor">{this.props.author}:</span> {this.props.message}</span>
             <span className="messageTime" data-livestamp={this.props.timestamp}></span>
            </li>
@@ -62,7 +63,7 @@ export default class Chat extends Component {
     if (this.props.roomMessages) {
       return this.props.roomMessages.map((message) => (
         <ListMessages key={message._id} author={message.user_id} message={message.message}
-                      timestamp={message.createdAt} />
+                      timestamp={message.createdAt} exitClass={message.messageClass}/>
       ));
     } else {
       return "";

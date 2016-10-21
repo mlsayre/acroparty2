@@ -5,11 +5,12 @@ import { check } from 'meteor/check';
 export const Messages = new Mongo.Collection('messages');
 
 Meteor.methods({
-  'messages.msgPlayer'(roomId, name, verb, roomName) {
+  'messages.msgPlayer'(roomId, name, verb, roomName, className) {
     Messages.insert({
       user_id: "<PartyHost>",
       room_id: roomId,
       message: name + verb + roomName,
+      messageClass: className,
       createdAt: new Date()
     });
   },

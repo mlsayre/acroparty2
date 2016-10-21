@@ -64,6 +64,15 @@ export default class App extends Component {
   }
 
   exitRoom(e) {
+    var exitingRoomVerb = [" leaves the room", " runs out of the room", " walks out of the room",
+                            " vanishes", " disappears", " backs out of the room slowly",
+                            " suddenly dematerializes", " scurries out of the room",
+                            " rushes out of here", " bids everyone a fond farewell",
+                            " leaps out the window", " takes off", " silently slips out of the room",
+                            " graciously exits the scene", " politely goes elsewhere", " backflips out of here"]
+    var randomExitVerb = exitingRoomVerb[Math.floor(Math.random() * exitingRoomVerb.length)]
+    Meteor.call('messages.msgPlayer', gameRoomIdSelected.get(), this.props.currentUser.username, randomExitVerb,
+      "...", "leavingMessage")
     Meteor.call('rooms.removePlayer', this.props.selectedRoom.room_id, this.props.currentUser.username)
     $(".popup").hide();
     $("#" + gameRoomIdSelected.get()).hide();

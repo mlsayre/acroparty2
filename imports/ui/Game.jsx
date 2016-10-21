@@ -35,6 +35,18 @@ export default class Game extends Component {
       $(".submittedInfo").text("Submitted: " + submitTime + "s");
     }
   }
+  // arrangeLetters() {
+  //   if (this.props.gameInfo) {
+  //     var currentRound = this.props.selectedRoom.round;
+  //     rawLetters = this.props.gameInfo.roundletters[currentRound - 1];
+  //     console.log(rawLetters)
+  //     for (var i = 0; i < rawLetters.length; i++) {
+  //       $(".currentLetters").append('<span>' + rawLetters[i] + '</span>')
+  //     }
+  //   } else {
+  //     return
+  //   }
+  // }
 
   render() {
     if (this.props.selectedRoom) {
@@ -59,16 +71,25 @@ export default class Game extends Component {
           $(".answerEnter").value = "";
           Meteor.call('games.getready', gameRoomIdSelected.get(), );
         } else if (currentSubround === "Play") {
-          $(".currentLetters").Morphext({
-            animation: "flipInY", // Overrides default "bounceIn"
-            separator: "", // Overrides default ","
-            speed: 1000, // Overrides default 2000
-            complete: function () {
-                // Overrides default empty function
-            }
-          });
           $(".gamestate").hide();
           $(".play").show();
+          // flip the letters
+          if (this.props.gameInfo.turnLetters === true) {
+            $(".currentLetters").textillate({
+              selector: '.texts',
+              initialDelay: 0,
+              autoStart: true,
+              in: {
+                effect: 'flipInY',
+                delayScale: 1.5,
+                delay: 800,
+              },
+              // callback: function () {
+              //   Meteor.call('games.letterFlipFlagOff', gameRoomIdSelected.get());
+              // },
+              type: 'char'
+            });
+          }
           var roundSeconds = this.props.gameInfo.roundtimes[currentRound - 1];
           Meteor.call('games.play', gameRoomIdSelected.get(), roundSeconds);
           if (this.props.gameInfo.playStartAnswering === true) {
@@ -148,8 +169,7 @@ export default class Game extends Component {
           Final game results!
         </div>
       </div>
-      // <div>{this.props.selectedRoom && this.props.selectedRoom.players.length > 1 ?
-      // <div>THERE IS MORE THAN ONE PLAYER HERE.</div> : <div>This is the game area.</div>}</div>
+
     );
   }
 }

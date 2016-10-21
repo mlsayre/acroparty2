@@ -151,6 +151,9 @@ span.scoresRight {
 .hostMessage .messageTime {
   font-size: 12px;
 }
+.leavingMessage {
+  background-color: #ff8c8c;
+}
 .authorMessage {
   width: 83%;
   display: block;

@@ -86,6 +86,9 @@ Meteor.methods({
 
   'games.play'(roomId, roundtime) {
     if (!playTimer[roomId]) { // one timer only
+      Games.update({room_id: roomId}, {
+        $set: { turnLetters: true }
+      })
       playTimer[roomId] = Meteor.setTimeout(function() {
         if (Gamedata.find({room_id: roomId}).fetch().length === 0) {
           Meteor.call('games.reset', roomId );
@@ -191,6 +194,12 @@ Meteor.methods({
     playStartTimer = {}
     voteTimer = {}
     resultsTimer = {}
+  },
+
+  'games.letterFlipFlagOff'(roomId) {
+    Games.update({room_id: roomId}, {
+      $set: { turnLetters: false }
+    })
   }
 
 })
