@@ -35,25 +35,12 @@ export default class Game extends Component {
       $(".submittedInfo").text("Submitted: " + submitTime + "s");
     }
   }
-  // arrangeLetters() {
-  //   if (this.props.gameInfo) {
-  //     var currentRound = this.props.selectedRoom.round;
-  //     rawLetters = this.props.gameInfo.roundletters[currentRound - 1];
-  //     console.log(rawLetters)
-  //     for (var i = 0; i < rawLetters.length; i++) {
-  //       $(".currentLetters").append('<span>' + rawLetters[i] + '</span>')
-  //     }
-  //   } else {
-  //     return
-  //   }
-  // }
 
   render() {
     if (this.props.selectedRoom) {
       var currentRound = this.props.selectedRoom.round;
       var currentSubround = this.props.selectedRoom.subround;
       if (currentSubround === "Waiting for players") {
-        console.log(this.props.gamedata.length)
         if (this.props.gamedata.length < 2) { // number of players needed to start game
           $(".gamestate").hide();
           $(".waitingForPlayers").show();
@@ -75,20 +62,23 @@ export default class Game extends Component {
           $(".play").show();
           // flip the letters
           if (this.props.gameInfo.turnLetters === true) {
-            $(".currentLetters").textillate({
+            console.log("textillate should run now")
+            var uniqueId = this.props.gameInfo._id;
+            $("." + uniqueId + currentRound).textillate({
               selector: '.texts',
               initialDelay: 0,
-              autoStart: true,
+              autoStart: false,
               in: {
                 effect: 'flipInY',
                 delayScale: 1.5,
                 delay: 800,
+                callback: function () {
+
+                }
               },
-              // callback: function () {
-              //   Meteor.call('games.letterFlipFlagOff', gameRoomIdSelected.get());
-              // },
               type: 'char'
             });
+            $("." + uniqueId + currentRound).textillate("start")
           }
           var roundSeconds = this.props.gameInfo.roundtimes[currentRound - 1];
           Meteor.call('games.play', gameRoomIdSelected.get(), roundSeconds);
@@ -146,7 +136,11 @@ export default class Game extends Component {
             <div className="numberSubmitted">0 of 3 Answers Submitted</div>
             <div className="categoryAndLetters">
               <div className="currentCat"><span className="catWord">Category:</span> {this.props.gameInfo ? this.props.gameInfo.roundcategories[currentRound - 1] : ""}</div>
-              <div className="currentLetters">{this.props.gameInfo ? this.props.gameInfo.roundletters[currentRound - 1] : ""}</div>
+              <div className="currentLetters">
+                <span className={(this.props.gameInfo ? this.props.gameInfo._id : "") + currentRound}>
+                  {this.props.gameInfo ? this.props.gameInfo.roundletters[currentRound - 1] : ""}
+                </span>
+              </div>
             </div>
             <div className="submittedInfo"></div>
           </div>

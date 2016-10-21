@@ -23,7 +23,7 @@ acroCategories = ["General", "Sports", "Food", "Movies", "Television", "History"
                   "The Holidays", "Short Ghost Stories", "... Said No One Ever", "Fairy/Folk Tales"]
 
 roundsToPlay = 8;
-roundTimes = [50, 60, 60, 80, 50, 60, 60 ,80]
+roundTimes = [5,5,5,5,5,5,5,5] // [50, 60, 60, 80, 50, 60, 60 ,80]
 roundAcroLength = [3, 4, 5, 6, 3, 4, 5, 6]
 readyTimer = {}
 playTimer = {}
@@ -80,12 +80,13 @@ Meteor.methods({
           });
         }
         delete readyTimer[roomId];
-      }, 7000);
+      }, 3500);
     }
   },
 
   'games.play'(roomId, roundtime) {
     if (!playTimer[roomId]) { // one timer only
+      var numberOfLetters = roundAcroLength[Rooms.findOne({room_id: roomId}).round - 1]
       Games.update({room_id: roomId}, {
         $set: { turnLetters: true }
       })
@@ -98,7 +99,7 @@ Meteor.methods({
           });
         }
         delete playTimer[roomId];
-      }, (roundtime * 1000) + 20000);
+      }, (roundtime * 1000) + (numberOfLetters * 1000) + 5000);
     }
     if (!playStartTimer[roomId]) {
       playStartTimer[roomId] = Meteor.setTimeout(function() {
@@ -107,15 +108,18 @@ Meteor.methods({
                   timerSeconds: roundtime }
         })
         timer(roundtime, roomId, "playtimerstate");
-      }, 16000)
+      }, (numberOfLetters * 1000) + 2000)
     }
+    Meteor.setTimeout(function() {
+      Meteor.call('games.letterFlipFlagOff', roomId);
+    }, 5000)
   },
 
   'games.vote'(roomId) {
     delete playStartTimer[roomId]
-    Games.update({room_id: roomId}, {
-      $set: { playStartAnswering: false }
-    })
+    // Games.update({room_id: roomId}, {
+    //   $set: { playStartAnswering: false }
+    // })
     if (!voteTimer[roomId]) { // one timer only
       voteTimer[roomId] = Meteor.setTimeout(function() {
         if (Gamedata.find({room_id: roomId}).fetch().length === 0) {
@@ -126,7 +130,7 @@ Meteor.methods({
           });
         }
         delete voteTimer[roomId];
-      }, 35000);
+      }, 4000); //35000
     }
   },
 
@@ -157,7 +161,7 @@ Meteor.methods({
             });
           }
           delete resultsTimer[roomId]
-        }, 22000);
+        }, 3000); //22000
       }
     }
   },
