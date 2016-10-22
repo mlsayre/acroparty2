@@ -9,6 +9,22 @@ import { Games } from '../api/games.js';
 import { Gamedata } from '../api/gamedata.js';
 import Room from './Room.jsx';
 
+export default class ShowLetters extends Component {
+  render() {
+    var currentRound = this.props.currentRound;
+    var theLetters = this.props.gameInfo ? this.props.gameInfo.roundletters[currentRound - 1] : ""
+    return <span className="allLetters">
+            <span className="letter1">{theLetters[0]}</span>
+            <span className="letter2">{theLetters[1]}</span>
+            <span className="letter3">{theLetters[2]}</span>
+            {theLetters[3] ? <span className="letter4">{theLetters[3]}</span> : ""}
+            {theLetters[4] ? <span className="letter5">{theLetters[4]}</span> : ""}
+            {theLetters[5] ? <span className="letter6">{theLetters[5]}</span> : ""}
+            {theLetters[6] ? <span className="letter7">{theLetters[6]}</span> : ""}
+           </span>
+  }
+}
+
 export default class Game extends Component {
   sendAnswer(event) {
     event.preventDefault();
@@ -60,28 +76,13 @@ export default class Game extends Component {
         } else if (currentSubround === "Play") {
           $(".gamestate").hide();
           $(".play").show();
-          // flip the letters
-          if (this.props.gameInfo.turnLetters === true) {
-            console.log("textillate should run now")
-            var uniqueId = this.props.gameInfo._id;
-            $("." + uniqueId + currentRound).textillate({
-              selector: '.texts',
-              initialDelay: 0,
-              autoStart: false,
-              in: {
-                effect: 'flipInY',
-                delayScale: 1.5,
-                delay: 800,
-                callback: function () {
-
-                }
-              },
-              type: 'char'
-            });
-            $("." + uniqueId + currentRound).textillate("start")
-          }
           var roundSeconds = this.props.gameInfo.roundtimes[currentRound - 1];
           Meteor.call('games.play', gameRoomIdSelected.get(), roundSeconds);
+          if (this.props.gameInfo.turnLetters === true) {
+            $(".allLetters span").addClass("animated flipInY");
+          } else {
+            $(".allLetters span").removeClass("animated flipInY");
+          }
           if (this.props.gameInfo.playStartAnswering === true) {
             $(".gameTimer").css("visibility", "visible");
           } else {
@@ -137,9 +138,8 @@ export default class Game extends Component {
             <div className="categoryAndLetters">
               <div className="currentCat"><span className="catWord">Category:</span> {this.props.gameInfo ? this.props.gameInfo.roundcategories[currentRound - 1] : ""}</div>
               <div className="currentLetters">
-                <span className={(this.props.gameInfo ? this.props.gameInfo._id : "") + currentRound}>
-                  {this.props.gameInfo ? this.props.gameInfo.roundletters[currentRound - 1] : ""}
-                </span>
+                <ShowLetters gameInfo={this.props.gameInfo}
+                             currentRound={this.props.selectedRoom ? this.props.selectedRoom.round : 0} />
               </div>
             </div>
             <div className="submittedInfo"></div>

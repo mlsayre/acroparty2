@@ -23,15 +23,13 @@ acroCategories = ["General", "Sports", "Food", "Movies", "Television", "History"
                   "The Holidays", "Short Ghost Stories", "... Said No One Ever", "Fairy/Folk Tales"]
 
 roundsToPlay = 8;
-roundTimes = [5,5,5,5,5,5,5,5] // [50, 60, 60, 80, 50, 60, 60 ,80]
+roundTimes = [9,9,9,9,9,9,9,9] // [50, 60, 60, 80, 50, 60, 60 ,80]
 roundAcroLength = [3, 4, 5, 6, 3, 4, 5, 6]
-readyTimer = {}
-playTimer = {}
-playStartTimer = {}
-voteTimer = {}
-resultsTimer = {}
-finalTimer = {}
-
+var readyTimerStatus = "init"
+var playTimerStatus = "init"
+var voteTimerStatus = "init"
+var resultsTimerStatus = "init"
+var finalTimerStatus = "init"
 
 ////////////
 
@@ -70,8 +68,9 @@ Meteor.methods({
   },
 
   'games.getready'(roomId) {
-    if (!readyTimer[roomId]) { // one timer only
-      readyTimer[roomId] = Meteor.setTimeout(function() {
+    if (readyTimerStatus !== "Ready running") { // one timer only
+      readyTimerStatus = "Ready running"
+      Meteor.setTimeout(function() {
         if (Gamedata.find({room_id: roomId}).fetch().length === 0) {
           Meteor.call('games.reset', roomId );
         } else {
@@ -79,17 +78,18 @@ Meteor.methods({
             $set: { subround: "Play" },
           });
         }
-        delete readyTimer[roomId];
+        readyTimerStatus = "Ready complete"
       }, 3500);
     }
   },
 
   'games.play'(roomId, roundtime) {
-    if (!playTimer[roomId]) { // one timer only
-      var numberOfLetters = roundAcroLength[Rooms.findOne({room_id: roomId}).round - 1]
+    if (playTimerStatus !== "Play running") { // one timer only
+      playTimerStatus = "Play running"
       Games.update({room_id: roomId}, {
         $set: { turnLetters: true }
       })
+      var numberOfLetters = roundAcroLength[Rooms.findOne({room_id: roomId}).round - 1]
       playTimer[roomId] = Meteor.setTimeout(function() {
         if (Gamedata.find({room_id: roomId}).fetch().length === 0) {
           Meteor.call('games.reset', roomId );
@@ -98,30 +98,30 @@ Meteor.methods({
             $set: { subround: "Vote" },
           });
         }
-        delete playTimer[roomId];
+        playTimerStatus = "Play complete"
+        Games.update({room_id: roomId}, {
+          $set: { playStartAnswering: false }
+        })
       }, (roundtime * 1000) + (numberOfLetters * 1000) + 5000);
-    }
-    if (!playStartTimer[roomId]) {
-      playStartTimer[roomId] = Meteor.setTimeout(function() {
+      Meteor.setTimeout(function() {
         Games.update({room_id: roomId}, {
           $set: { playStartAnswering: true,
                   timerSeconds: roundtime }
         })
         timer(roundtime, roomId, "playtimerstate");
       }, (numberOfLetters * 1000) + 2000)
+
+
+      Meteor.setTimeout(function() {
+        Meteor.call('games.letterFlipFlagOff', roomId);
+      }, (numberOfLetters * 1000) + 600)
     }
-    Meteor.setTimeout(function() {
-      Meteor.call('games.letterFlipFlagOff', roomId);
-    }, 5000)
   },
 
   'games.vote'(roomId) {
-    delete playStartTimer[roomId]
-    // Games.update({room_id: roomId}, {
-    //   $set: { playStartAnswering: false }
-    // })
-    if (!voteTimer[roomId]) { // one timer only
-      voteTimer[roomId] = Meteor.setTimeout(function() {
+    if (voteTimerStatus !== "Vote running") { // one timer only
+      voteTimerStatus = "Vote running"
+      Meteor.setTimeout(function() {
         if (Gamedata.find({room_id: roomId}).fetch().length === 0) {
           Meteor.call('games.reset', roomId );
         } else {
@@ -129,30 +129,31 @@ Meteor.methods({
             $set: { subround: "Results" },
           });
         }
-        delete voteTimer[roomId];
+        voteTimerStatus = "Vote complete"
       }, 4000); //35000
     }
   },
 
   'games.results'(roomId) {
-    if (!resultsTimer[roomId]) { // one timer only
+    if (resultsTimerStatus !== "Results running") { // one timer only
+      resultsTimerStatus = "Results running"
       var currentRound = Rooms.findOne({room_id: roomId}).round;
       if (currentRound === roundsToPlay) {
-        resultsTimer[roomId] = Meteor.setTimeout(function() {
+        Meteor.setTimeout(function() {
           if (Gamedata.find({room_id: roomId}).fetch().length < 2) { // end game after results if not enough players
-            delete resultsTimer[roomId];
+            resultsTimerStatus = "Results complete"
             Meteor.call('games.reset', roomId );
           } else {
             Rooms.update({room_id: roomId}, {
               $set: { subround: "Final results" },
             });
           }
-          delete resultsTimer[roomId];
-        }, 22000);
+          resultsTimerStatus = "Results complete"
+        }, 3000); //22000
       } else {
-        resultsTimer[roomId] = Meteor.setTimeout(function() {
+        Meteor.setTimeout(function() {
           if (Gamedata.find({room_id: roomId}).fetch().length < 2) { // end game after results if not enough players
-            delete resultsTimer[roomId];
+            resultsTimerStatus = "Results complete"
             Meteor.call('games.reset', roomId );
           } else {
             Rooms.update({room_id: roomId}, {
@@ -160,30 +161,31 @@ Meteor.methods({
                       subround: "Get ready" },
             });
           }
-          delete resultsTimer[roomId]
+          resultsTimerStatus = "Results complete"
         }, 3000); //22000
       }
     }
   },
 
   'games.finalresults'(roomId) {
-    if (!finalTimer[roomId]) { // one timer only
-      finalTimer[roomId] = Meteor.setTimeout(function() {
+    if (finalTimerStatus !== "Final running") { // one timer only
+      finalTimerStatus = "Final running"
+      Meteor.setTimeout(function() {
         if (Gamedata.find({room_id: roomId}).fetch().length < 2) { // end game after results if not enough players
-          delete finalTimer[roomId];
+          finalTimerStatus = "Final complete"
           Meteor.call('games.reset', roomId );
         } else { // set up for new game
           Games.remove({ room_id: roomId });
           Meteor.call('games.init', roomId );
         }
-        delete finalTimer[roomId];
+        finalTimerStatus = "Final complete"
       }, 25000);
     }
-    readyTimer = {}
-    playTimer = {}
-    playStartTimer = {}
-    voteTimer = {}
-    resultsTimer = {}
+    readyTimerStatus = "init"
+    playTimerStatus = "init"
+    voteTimerStatus = "init"
+    resultsTimerStatus = "init"
+    finalTimerStatus = "init"
   },
 
   'games.reset'(roomId) {
@@ -193,11 +195,11 @@ Meteor.methods({
       $set: { round: 0,
               subround: "Waiting for players" },
     });
-    readyTimer = {}
-    playTimer = {}
-    playStartTimer = {}
-    voteTimer = {}
-    resultsTimer = {}
+    readyTimerStatus = "init"
+    playTimerStatus = "init"
+    voteTimerStatus = "init"
+    resultsTimerStatus = "init"
+    finalTimerStatus = "init"
   },
 
   'games.letterFlipFlagOff'(roomId) {

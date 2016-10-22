@@ -269,6 +269,36 @@ input.messageEnter {
   font-weight: 700;
   margin: 2% 0 4%;
 }
+.letter2 {
+  animation-delay: .8s;
+  -webkit-animation-delay: .8s;
+  -moz-animation-delay: .8s;
+}
+.letter3 {
+  animation-delay: 1.6s;
+  -webkit-animation-delay: 1.6s;
+  -moz-animation-delay: 1.6s;
+}
+.letter4 {
+  animation-delay: 2.4s;
+  -webkit-animation-delay: 2.4s;
+  -moz-animation-delay: 2.4s;
+}
+.letter5 {
+  animation-delay: 3.2s;
+  -webkit-animation-delay: 3.2s;
+  -moz-animation-delay: 3.2s;
+}
+.letter6 {
+  animation-delay: 4s;
+  -webkit-animation-delay: 4s;
+  -moz-animation-delay: 4s;
+}
+.letter7 {
+  animation-delay: 4.8s;
+  -webkit-animation-delay: 4.8s;
+  -moz-animation-delay: 4.8s;
+}
 .gameBottom {
   text-align: center;
 }
