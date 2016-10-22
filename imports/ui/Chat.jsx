@@ -114,6 +114,8 @@ export default class Chat extends Component {
 // };
 
 export default createContainer(() => {
+  Meteor.subscribe('messages');
+  Meteor.subscribe('gamedata');
   return {
     currentUser: Meteor.user(),
     roomMessages: Messages.find({ room_id: gameRoomIdSelected.get() }, { sort: { createdAt: 1 } }).fetch(),

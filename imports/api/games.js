@@ -7,6 +7,12 @@ import { Rooms } from '../api/rooms.js';
 import { Gamedata } from '../api/gamedata.js';
 export const Games = new Mongo.Collection('games');
 
+if (Meteor.isServer) {
+  Meteor.publish('games', function tasksPublication() {
+    return Games.find();
+  });
+}
+
 // game config
 acroLettersPool = "AAAAAAAAAAAAAAAAAAAAAAAABBBBBBBBBBBBBBBBBBBBBBBBCCCCCCCCCCCCCCCCCCCCCCCCDDDDDDDDDDDDDDDDDDDDDDDDEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEFFFFFFFFFFFFFFFFFFFFFFFFGGGGGGGGGGGGGGGGGGGGGGGGHHHHHHHHHHHHHHHHHHHHHHHHIIIIIIIIIIIIIIIIIIIIIIJJJJJKKKKKKLLLLLLLLLLLLLLLLLLLLLLLLMMMMMMMMMMMMMMMMMMMMMMMMNNNNNNNNNNNNNNNNNNNNNNNNOOOOOOOOOOOOOOOOOOPPPPPPPPPPPPPPPPPPPPPPPPQQQQRRRRRRRRRRRRRRRRRRSSSSSSSSSSSSSSSSSSSSSSSSTTTTTTTTTTTTTTTTTTTTTTTTUUUUUUUVVVVVVVVVVVVWWWWWWWWWWWWXYYYYYYYYYYYYZZZZ";
 
@@ -23,7 +29,7 @@ acroCategories = ["General", "Sports", "Food", "Movies", "Television", "History"
                   "The Holidays", "Short Ghost Stories", "... Said No One Ever", "Fairy/Folk Tales"]
 
 roundsToPlay = 8;
-roundTimes = [9,9,9,9,9,9,9,9] // [50, 60, 60, 80, 50, 60, 60 ,80]
+roundTimes = [12,12,12,12,12,12,12,12] // [50, 60, 60, 80, 50, 60, 60 ,80]
 roundAcroLength = [3, 4, 5, 6, 3, 4, 5, 6]
 var readyTimerStatus = "init"
 var playTimerStatus = "init"

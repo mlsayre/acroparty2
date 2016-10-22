@@ -6,6 +6,12 @@ import { Rooms } from '../api/rooms.js';
 import { Games } from '../api/games.js';
 export const Gamedata = new Mongo.Collection('gamedata');
 
+if (Meteor.isServer) {
+  Meteor.publish('gamedata', function tasksPublication() {
+    return Gamedata.find();
+  });
+}
+
 Meteor.methods({
   'gamedata.postAnswer'(roomId, userId, answer) {
     var submitAnswerTime = new Date();

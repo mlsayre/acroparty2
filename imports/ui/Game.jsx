@@ -17,10 +17,10 @@ export default class ShowLetters extends Component {
             <span className="letter1">{theLetters[0]}</span>
             <span className="letter2">{theLetters[1]}</span>
             <span className="letter3">{theLetters[2]}</span>
-            {theLetters[3] ? <span className="letter4">{theLetters[3]}</span> : ""}
-            {theLetters[4] ? <span className="letter5">{theLetters[4]}</span> : ""}
-            {theLetters[5] ? <span className="letter6">{theLetters[5]}</span> : ""}
-            {theLetters[6] ? <span className="letter7">{theLetters[6]}</span> : ""}
+            <span className="letter4">{theLetters[3]}</span>
+            <span className="letter5">{theLetters[4]}</span>
+            <span className="letter6">{theLetters[5]}</span>
+            <span className="letter7">{theLetters[6]}</span>
            </span>
   }
 }
@@ -71,7 +71,8 @@ export default class Game extends Component {
           $(".gamestate").hide();
           $(".getReady").show();
           $(".submittedInfo").text("")
-          $(".answerEnter").value = "";
+          $(".answerEnter").val("");
+          $(".allLetters").hide();
           Meteor.call('games.getready', gameRoomIdSelected.get(), );
         } else if (currentSubround === "Play") {
           $(".gamestate").hide();
@@ -80,6 +81,7 @@ export default class Game extends Component {
           Meteor.call('games.play', gameRoomIdSelected.get(), roundSeconds);
           if (this.props.gameInfo.turnLetters === true) {
             $(".allLetters span").addClass("animated flipInY");
+            $(".allLetters").show();
           } else {
             $(".allLetters span").removeClass("animated flipInY");
           }
@@ -169,6 +171,9 @@ export default class Game extends Component {
 }
 
 export default createContainer(() => {
+  Meteor.subscribe('rooms');
+  Meteor.subscribe('games');
+  Meteor.subscribe('gamedata');
   //var userRoom = Meteor.user().currentRoom;
   return {
     currentUser: Meteor.user(),

@@ -176,6 +176,11 @@ export default class App extends Component {
 }
 
 export default createContainer(() => {
+  Meteor.subscribe('rooms');
+  Meteor.subscribe('chats');
+  Meteor.subscribe('games');
+  Meteor.subscribe('gamedata');
+  Meteor.subscribe('messages');
   //var userRoom = Meteor.user().currentRoom;
   return {
     currentUser: Meteor.user(),

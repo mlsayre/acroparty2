@@ -1,4 +1,5 @@
 import React, { Component, PropTypes } from 'react';
+import { createContainer } from 'meteor/react-meteor-data';
 import { Gamedata } from '../api/gamedata.js';
 
 // Room component - represents a single room item
@@ -12,6 +13,11 @@ export default class Room extends Component {
     );
   }
 }
+
+export default createContainer(() => {
+  Meteor.subscribe('gamedata');
+  return {};
+}, Room);
 
 Room.propTypes = {
   // This component gets the room to display through a React prop.

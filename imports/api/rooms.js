@@ -5,6 +5,12 @@ import { check } from 'meteor/check';
 export const Rooms = new Mongo.Collection('rooms');
 import { Gamedata } from '../api/gamedata.js';
 
+if (Meteor.isServer) {
+  Meteor.publish('rooms', function tasksPublication() {
+    return Rooms.find();
+  });
+}
+
 Meteor.methods({
   'rooms.addPlayer'(roomId, playerAdding) {
     if (!Gamedata.findOne({room_id: roomId, user_id: playerAdding})) {
