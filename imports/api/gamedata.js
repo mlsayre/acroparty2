@@ -15,8 +15,10 @@ if (Meteor.isServer) {
 Meteor.methods({
   'gamedata.postAnswer'(roomId, userId, answer) {
     var submitAnswerTime = new Date();
+    var randomNumber = Math.floor(Math.random()*200);
     Gamedata.update({room_id: roomId, user_id: userId}, {
       $set: { answer: answer,
+              randomSorting: randomNumber,
               submitAnswerTime: submitAnswerTime },
     });
     var countStarted = Games.findOne({room_id: roomId}).playStartTime

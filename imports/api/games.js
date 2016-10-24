@@ -42,12 +42,11 @@ var finalTimerStatus = "init"
 Meteor.methods({
   'games.init'(roomId) {
     if (Games.find({ room_id: roomId }).fetch().length === 0) { //always make sure updates only happen once
-      readyTimer = {}
-      playTimer = {}
-      playStartTimer = {}
-      voteTimer = {}
-      resultsTimer = {}
-      finalTimer = {}
+      readyTimerStatus = "init"
+      playTimerStatus = "init"
+      voteTimerStatus = "init"
+      resultsTimerStatus = "init"
+      finalTimerStatus = "init"
       var roundletters;
       var acroPoolLength = acroLettersPool.length;
       var catPoolLength = acroCategories.length;
@@ -96,7 +95,7 @@ Meteor.methods({
         $set: { turnLetters: true }
       })
       var numberOfLetters = roundAcroLength[Rooms.findOne({room_id: roomId}).round - 1]
-      playTimer[roomId] = Meteor.setTimeout(function() {
+      Meteor.setTimeout(function() {
         if (Gamedata.find({room_id: roomId}).fetch().length === 0) {
           Meteor.call('games.reset', roomId );
         } else {
@@ -185,13 +184,8 @@ Meteor.methods({
           Meteor.call('games.init', roomId );
         }
         finalTimerStatus = "Final complete"
-      }, 25000);
+      }, 8000); //25000
     }
-    readyTimerStatus = "init"
-    playTimerStatus = "init"
-    voteTimerStatus = "init"
-    resultsTimerStatus = "init"
-    finalTimerStatus = "init"
   },
 
   'games.reset'(roomId) {
