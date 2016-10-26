@@ -28,6 +28,12 @@ Meteor.methods({
     });
   },
 
+  'gamedata.vote'(roomId, userId, votedfor) {
+    Gamedata.update({room_id: roomId, user_id: userId}, {
+      $set: { votedFor: votedfor },
+    });
+  },
+
   // 'rooms.removePlayer'(roomId, playerRemoving) {
   //   Rooms.update(roomId, {
   //     $pull: { players:  playerRemoving

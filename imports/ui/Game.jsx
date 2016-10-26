@@ -25,6 +25,15 @@ export default class ShowLetters extends Component {
   }
 }
 
+export default class Answers extends Component {
+  render() {
+    return (<li className="answerItem">
+              <button className="voteButton" data-answer={this.props.answer} onClick={this.props.vote}>Vote</button>
+              <span>"{this.props.answer}"</span></li>
+    );
+  }
+}
+
 export default class Game extends Component {
   sendAnswer(event) {
     event.preventDefault();
@@ -50,6 +59,20 @@ export default class Game extends Component {
       var submitTime = Gamedata.findOne({room_id: gameRoomIdSelected.get(), user_id: this.props.currentUser.username}).finalAnswerTime
       $(".submittedInfo").text("Submitted: " + submitTime + "s");
     }
+  }
+
+  vote(e) {
+    var theanswer = $(e.target).attr("data-answer").toString();
+    console.log(theanswer)
+    var votedFor = Gamedata.findOne({ answer: theanswer }) ? Gamedata.findOne({ answer: theanswer }).user_id : "nobody";
+    console.log(votedFor)
+    Meteor.call('gamedata.vote', gameRoomIdSelected.get(), this.props.currentUser.username, votedFor);
+  }
+
+  showChoices() {
+    return this.props.ransortgamedata.map((answer) => (
+      <Answers key={answer._id} answer={answer.answer} vote={this.vote.bind(this)} />
+    ));
   }
 
   render() {
@@ -156,7 +179,21 @@ export default class Game extends Component {
 
         </div>
         <div className="gamestate vote">
-          Now vote!
+          <div className="gameTop">
+            <div className="roundInfo">
+              Round {this.props.selectedRoom ? this.props.selectedRoom.round : ""} of&nbsp;
+              {this.props.gameInfo ? this.props.gameInfo.roundletters.length : ""}
+            </div>
+            <div className="gameTimer">{this.props.gameInfo ? this.props.gameInfo.timerSeconds : 0}</div>
+          </div>
+          <div className="gameMiddle">
+            <div className="voteArea">
+              { this.showChoices() }
+            </div>
+          </div>
+          <div className="gameBottom">
+
+          </div>
         </div>
         <div className="gamestate results">
           The results!
@@ -180,6 +217,7 @@ export default createContainer(() => {
     selectedRoom: Rooms.findOne({ room_id: gameRoomIdSelected.get() }),
     gameInfo: Games.findOne({room_id: gameRoomIdSelected.get()}) ? Games.findOne({room_id: gameRoomIdSelected.get()}) : "",
     gamedata: Gamedata.find({room_id: gameRoomIdSelected.get()}).fetch(),
+    ransortgamedata: Gamedata.find({ room_id: gameRoomIdSelected.get() }, {sort: { randomSorting : 1} }).fetch(),
   };
 }, Game);
 

@@ -29,7 +29,7 @@ acroCategories = ["General", "Sports", "Food", "Movies", "Television", "History"
                   "The Holidays", "Short Ghost Stories", "... Said No One Ever", "Fairy/Folk Tales"]
 
 roundsToPlay = 8;
-roundTimes = [12,12,12,12,12,12,12,12] // [50, 60, 60, 80, 50, 60, 60 ,80]
+roundTimes = [50, 60, 60, 80, 50, 60, 60 ,80]
 roundAcroLength = [3, 4, 5, 6, 3, 4, 5, 6]
 var readyTimerStatus = "init"
 var playTimerStatus = "init"
@@ -135,7 +135,7 @@ Meteor.methods({
           });
         }
         voteTimerStatus = "Vote complete"
-      }, 4000); //35000
+      }, 3500000); //35000
     }
   },
 
