@@ -17,7 +17,7 @@ import Game from './Game.jsx';
 
 
 // App component - represents the whole app
-export default class App extends Component {
+export class App extends Component {
 
   userRouting() {
     if (this.props.currentUser) {

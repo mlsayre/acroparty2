@@ -9,7 +9,7 @@ import { Games } from '../api/games.js';
 import { Gamedata } from '../api/gamedata.js';
 import Room from './Room.jsx';
 
-export default class ShowLetters extends Component {
+export class ShowLetters extends Component {
   render() {
     var currentRound = this.props.currentRound;
     var theLetters = this.props.gameInfo ? this.props.gameInfo.roundletters[currentRound - 1] : ""
@@ -25,7 +25,7 @@ export default class ShowLetters extends Component {
   }
 }
 
-export default class Answers extends Component {
+export class Answers extends Component {
   render() {
     return (<li className="answerItem">
               <button className="voteButton" data-answer={this.props.answer} onClick={this.props.vote}>Vote</button>
@@ -34,7 +34,7 @@ export default class Answers extends Component {
   }
 }
 
-export default class Game extends Component {
+export class Game extends Component {
   sendAnswer(event) {
     event.preventDefault();
     const answer = ReactDOM.findDOMNode(this.refs.answerInput).value.trim();
@@ -122,6 +122,18 @@ export default class Game extends Component {
           $(".gamestate").hide();
           $(".vote").show();
           Meteor.call('games.vote', gameRoomIdSelected.get());
+          if (this.props.gameInfo.voteStartVoting === true) {
+            $(".gameTimer").css("visibility", "visible");
+          } else {
+            $(".gameTimer").css("visibility", "hidden");
+          }
+          if (this.props.gameInfo.showAnswersForVote === true) {
+            $(".voteTitle").removeClass("zoomIn").addClass("flipOutX").hide(800);
+            $(".voteArea").css("visibility", "visible");
+          } else {
+            $(".voteTitle").show().removeClass("flipOutX").addClass("zoomIn");
+            $(".voteArea").css("visibility", "hidden");
+          }
         } else if (currentSubround === "Results") {
           $(".gamestate").hide();
           $(".results").show();
@@ -159,7 +171,8 @@ export default class Game extends Component {
             <div className="gameTimer">{this.props.gameInfo ? this.props.gameInfo.timerSeconds : 0}</div>
           </div>
           <div className="gameMiddle">
-            <div className="numberSubmitted">0 of 3 Answers Submitted</div>
+            <div className="numberSubmitted">{this.props.gamedataanswered ? this.props.gamedataanswered.length : "0"} of&nbsp;
+              {this.props.gamedata ? this.props.gamedata.length : "0"} Answers Submitted</div>
             <div className="categoryAndLetters">
               <div className="currentCat"><span className="catWord">Category:</span> {this.props.gameInfo ? this.props.gameInfo.roundcategories[currentRound - 1] : ""}</div>
               <div className="currentLetters">
@@ -187,6 +200,7 @@ export default class Game extends Component {
             <div className="gameTimer">{this.props.gameInfo ? this.props.gameInfo.timerSeconds : 0}</div>
           </div>
           <div className="gameMiddle">
+            <div className="voteTitle animated">Time to vote!</div>
             <div className="voteArea">
               { this.showChoices() }
             </div>
@@ -217,6 +231,7 @@ export default createContainer(() => {
     selectedRoom: Rooms.findOne({ room_id: gameRoomIdSelected.get() }),
     gameInfo: Games.findOne({room_id: gameRoomIdSelected.get()}) ? Games.findOne({room_id: gameRoomIdSelected.get()}) : "",
     gamedata: Gamedata.find({room_id: gameRoomIdSelected.get()}).fetch(),
+    gamedataanswered: Gamedata.find( { room_id: gameRoomIdSelected.get(), answer: { $ne: "" } } ).fetch(),
     ransortgamedata: Gamedata.find({ room_id: gameRoomIdSelected.get() }, {sort: { randomSorting : 1} }).fetch(),
   };
 }, Game);

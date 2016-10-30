@@ -6,7 +6,7 @@ body {
 button {
   background-color: rgb(43, 131, 231);
   color: white;
-  border: 2px outset #999FEC;
+  border: 1px outset #999FEC;
   border-radius: 6px;
   padding: 2px 12px;
   transition: all 200ms;
@@ -325,10 +325,14 @@ button.answerSend {
   font-size: 22px;
 }
 
+.voteTitle {
+  font-size: 26px;
+  text-align: center;
+}
 .voteArea {
   width: 50%;
   min-width: 310px;
-  margin: 20px auto;
+  margin: -5% auto 20px;
   border: 1px solid lightgrey;
   border-radius: 8px;
   padding: 6px;

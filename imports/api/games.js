@@ -85,6 +85,10 @@ Meteor.methods({
         }
         readyTimerStatus = "Ready complete"
       }, 3500);
+      Gamedata.update({room_id: roomId}, {
+        $set: { answer: "",
+                votedFor: "" },
+      }, { multi: true } );
     }
   },
 
@@ -134,8 +138,16 @@ Meteor.methods({
             $set: { subround: "Results" },
           });
         }
+        Games.update({room_id: roomId}, {
+        $set: { voteStartVoting: false }
+      })
         voteTimerStatus = "Vote complete"
-      }, 3500000); //35000
+      }, 37000); //37000
+      Games.update({room_id: roomId}, {
+        $set: { voteStartVoting: true,
+                timerSeconds: 35 }
+      })
+      timer(35, roomId, "votetimerstate");
     }
   },
 
@@ -221,7 +233,7 @@ function timer(seconds, roomId, statetoactivate) {
       })
     } else {
       Games.update({room_id: roomId}, {
-        $set: { voteStartTime:countdownStartTime }
+        $set: { showAnswersForVote: true }
       })
     }
     var count = seconds;
@@ -232,7 +244,8 @@ function timer(seconds, roomId, statetoactivate) {
       if (count < 0) {
          Meteor.clearInterval(counter);
          Games.update({room_id: roomId}, {
-            $set: { showAnswerForm: false }
+            $set: { showAnswerForm: false,
+                    showAnswersForVote: false }
           })
          return;
       }

@@ -3,7 +3,7 @@ import { createContainer } from 'meteor/react-meteor-data';
 import { Gamedata } from '../api/gamedata.js';
 
 // Room component - represents a single room item
-export default class Room extends Component {
+export class Room extends Component {
   render() {
     return (<li><button className="roomSelect" data-room={this.props.room.room_id} onClick={this.props.updateRoom}>Join</button>
         <span className="roomlistTitle">{this.props.room.displayName}</span>

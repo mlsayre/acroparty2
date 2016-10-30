@@ -6,7 +6,7 @@ import { gameRoomIdSelected } from './App.jsx'
 import { Messages } from '../api/messages.js';
 import { Gamedata } from '../api/gamedata.js';
 
-export default class ListMessages extends Component {
+export class ListMessages extends Component {
   componentDidMount() {
     var $this = $(ReactDOM.findDOMNode(this));
     $(".messagesRead")[0].scrollTop = $(".messagesRead")[0].scrollHeight;
@@ -20,14 +20,14 @@ export default class ListMessages extends Component {
   }
 }
 
-export default class ListItemPlayer extends Component {
+export class ListItemPlayer extends Component {
   render() {
     return <li className="playerInList" data-playerInList={this.props.name}>{this.props.name}
     <span className="scoresRight">{this.props.score}</span></li>;
   }
 }
 
-export default class Chat extends Component {
+export class Chat extends Component {
   listPlayers() {
     var playerListArray = [];
     this.props.roomPlayers.forEach(function() {

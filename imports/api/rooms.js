@@ -17,6 +17,8 @@ Meteor.methods({
       Gamedata.insert({
         room_id: roomId,
         user_id: playerAdding,
+        answer: "",
+        votedFor: "",
         score: 0 ,
       });
     }
