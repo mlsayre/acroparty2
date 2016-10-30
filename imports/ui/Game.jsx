@@ -34,6 +34,23 @@ export class Answers extends Component {
   }
 }
 
+export class Results extends Component {
+  render() {
+    return (<tr className="resultItem">
+              <td className="resultPlace">{this.props.place}</td>
+              <td className="resultUsername">{this.props.username}</td>
+              <td className="resultAnswer">"{this.props.answer}"</td>
+              <td className="resultAnswerTime">({this.props.answertime}s)</td>
+              <td className="resultVotesRec">{this.props.votesrec}</td>
+              <td className="resultWinBonus">{this.props.winbonus}</td>
+              <td className="resultFastest">{this.props.fastest}</td>
+              <td className="resultVoteWinner">{this.props.voteforwinner}</td>
+              <td className="resultTotalPoints">{this.props.totalpoints}</td>
+            </tr>
+    );
+  }
+}
+
 export class Game extends Component {
   sendAnswer(event) {
     event.preventDefault();
@@ -72,6 +89,14 @@ export class Game extends Component {
   showChoices() {
     return this.props.ransortgamedata.map((answer) => (
       <Answers key={answer._id} answer={answer.answer} vote={this.vote.bind(this)} />
+    ));
+  }
+
+  showResults() {
+    return this.props.gamedataresults.map((result, index) => (
+      <Results key={result._id} answer={result.answer} username={result.user_id} votesrec={result.roundVotesReceived}
+       winbonus={result.roundWonBonus} fastest={result.roundSpeedBonus} voteforwinner={result.roundVotedForWinner}
+       totalpoints={result.roundTotalPoints} answertime={result.finalAnswerTime} place={index + 1} />
     ));
   }
 
@@ -138,6 +163,13 @@ export class Game extends Component {
           $(".gamestate").hide();
           $(".results").show();
           Meteor.call('games.results', gameRoomIdSelected.get());
+          if (this.props.gameInfo.showResults === true) {
+            $(".resultsTitle").removeClass("zoomIn").addClass("flipOutX").hide(800);
+            $(".resultsArea").css("visibility", "visible");
+          } else {
+            $(".resultsTitle").show().removeClass("flipOutX").addClass("zoomIn");
+            $(".resultsArea").css("visibility", "hidden");
+          }
         } else if (currentSubround === "Final results") {
           $(".gamestate").hide();
           $(".finalresults").show();
@@ -210,7 +242,36 @@ export class Game extends Component {
           </div>
         </div>
         <div className="gamestate results">
-          The results!
+          <div className="gameTop">
+            <div className="roundInfo">
+              Round {this.props.selectedRoom ? this.props.selectedRoom.round : ""} of&nbsp;
+              {this.props.gameInfo ? this.props.gameInfo.roundletters.length : ""}
+            </div>
+          </div>
+          <div className="gameMiddle">
+            <div className="resultsTitle animated">
+              Round {this.props.selectedRoom ? this.props.selectedRoom.round : ""} results!
+            </div>
+            <div className="resultsArea">
+              <table>
+                <tr className="resultItem resultsTitles">
+                  <th className="resultPlace"></th>
+                  <th className="resultUsername">Player</th>
+                  <th className="resultAnswer">Acro</th>
+                  <th className="resultAnswerTime">Time</th>
+                  <th className="resultVotesRec">Vts</th>
+                  <th className="resultWinBonus">WB</th>
+                  <th className="resultFastest">SB</th>
+                  <th className="resultVoteWinner">VfW</th>
+                  <th className="resultTotalPoints">Total</th>
+                </tr>
+                { this.showResults() }
+              </table>
+            </div>
+          </div>
+          <div className="gameBottom">
+
+          </div>
         </div>
         <div className="gamestate finalresults">
           Final game results!
@@ -232,7 +293,8 @@ export default createContainer(() => {
     gameInfo: Games.findOne({room_id: gameRoomIdSelected.get()}) ? Games.findOne({room_id: gameRoomIdSelected.get()}) : "",
     gamedata: Gamedata.find({room_id: gameRoomIdSelected.get()}).fetch(),
     gamedataanswered: Gamedata.find( { room_id: gameRoomIdSelected.get(), answer: { $ne: "" } } ).fetch(),
-    ransortgamedata: Gamedata.find({ room_id: gameRoomIdSelected.get() }, {sort: { randomSorting : 1} }).fetch(),
+    ransortgamedata: Gamedata.find({ room_id: gameRoomIdSelected.get() }, {$sort: { randomSorting : 1} }).fetch(),
+    gamedataresults: Gamedata.find({ room_id: gameRoomIdSelected.get() }, {$sort: { roundTotalPoints : -1, finalAnswerTime : 1} }).fetch(),
   };
 }, Game);
 

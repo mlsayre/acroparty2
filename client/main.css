@@ -347,3 +347,37 @@ button.answerSend {
 .answerItem span {
   vertical-align: bottom;
 }
+
+.resultsTitle {
+  font-size: 26px;
+  text-align: center;
+}
+.resultsArea {
+  width: 70%;
+  min-width: 310px;
+  margin: -3% auto 20px;
+  border: 1px solid lightgrey;
+  border-radius: 8px;
+  padding: 6px;
+  background: rgba(210, 244, 249, 0.6);
+}
+.resultsArea table {
+  margin: 0 auto;
+}
+.resultsTitles {
+  font-size: 12px;
+}
+.resultItem span {
+  min-width: 15px;
+  display: inline-block;
+}
+.resultVotesRec,
+.resultWinBonus,
+.resultFastest,
+.resultVoteWinner,
+.resultTotalPoints {
+  text-align: center;
+}
+.resultAnswerTime {
+  font-size: 12px;
+}

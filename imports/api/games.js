@@ -87,7 +87,12 @@ Meteor.methods({
       }, 3500);
       Gamedata.update({room_id: roomId}, {
         $set: { answer: "",
-                votedFor: "" },
+                votedFor: "",
+                roundVotesReceived: 0,
+                roundWonBonus: 0,
+                roundSpeedBonus: 0,
+                roundVotedForWinner: 0,
+                roundTotalPoints: 0 },
       }, { multi: true } );
     }
   },
@@ -165,8 +170,11 @@ Meteor.methods({
               $set: { subround: "Final results" },
             });
           }
+          Games.update({room_id: roomId}, {
+            $set: { showResults: false}
+          })
           resultsTimerStatus = "Results complete"
-        }, 3000); //22000
+        }, 22000); //22000
       } else {
         Meteor.setTimeout(function() {
           if (Gamedata.find({room_id: roomId}).fetch().length < 2) { // end game after results if not enough players
@@ -178,9 +186,17 @@ Meteor.methods({
                       subround: "Get ready" },
             });
           }
+          Games.update({room_id: roomId}, {
+            $set: { showResults: false}
+          })
           resultsTimerStatus = "Results complete"
-        }, 3000); //22000
+        }, 2200000); //22000
       }
+      Meteor.setTimeout(function() {
+        Games.update({room_id: roomId}, {
+          $set: { showResults: true}
+        })
+      }, 2000);
     }
   },
 

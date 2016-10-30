@@ -19,6 +19,11 @@ Meteor.methods({
         user_id: playerAdding,
         answer: "",
         votedFor: "",
+        roundVotesReceived: 0,
+        roundWonBonus: 0,
+        roundSpeedBonus: 0,
+        roundVotedForWinner: 0,
+        roundTotalPoints: 0,
         score: 0 ,
       });
     }
