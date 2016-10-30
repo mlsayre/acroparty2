@@ -293,8 +293,8 @@ export default createContainer(() => {
     gameInfo: Games.findOne({room_id: gameRoomIdSelected.get()}) ? Games.findOne({room_id: gameRoomIdSelected.get()}) : "",
     gamedata: Gamedata.find({room_id: gameRoomIdSelected.get()}).fetch(),
     gamedataanswered: Gamedata.find( { room_id: gameRoomIdSelected.get(), answer: { $ne: "" } } ).fetch(),
-    ransortgamedata: Gamedata.find({ room_id: gameRoomIdSelected.get() }, {$sort: { randomSorting : 1} }).fetch(),
-    gamedataresults: Gamedata.find({ room_id: gameRoomIdSelected.get() }, {$sort: { roundTotalPoints : -1, finalAnswerTime : 1} }).fetch(),
+    ransortgamedata: Gamedata.find({ room_id: gameRoomIdSelected.get(), user_id: { $ne: Meteor.user() ? Meteor.user().username : "" } }, {$sort: { randomSorting : 1} }).fetch(),
+    gamedataresults: Gamedata.find({ room_id: gameRoomIdSelected.get(), answer: { $ne: "" } }, {$sort: { roundTotalPoints : -1, finalAnswerTime : 1} }).fetch(),
   };
 }, Game);
 

@@ -159,7 +159,51 @@ Meteor.methods({
   'games.results'(roomId) {
     if (resultsTimerStatus !== "Results running") { // one timer only
       resultsTimerStatus = "Results running"
+      //tally votes, etc.
       var currentRound = Rooms.findOne({room_id: roomId}).round;
+      var roundBonus = Games.findOne({room_id: roomId}).roundletters[currentRound - 1].length
+      Gamedata.find({room_id: roomId}).fetch().forEach(function(gamedata) {
+        if ( Gamedata.findOne({room_id: roomId, user_id: gamedata.votedFor})) {
+          Gamedata.update({room_id: roomId, user_id: gamedata.votedFor, votedFor: { $ne: "" } }, {
+            $inc: { roundVotesReceived: 1 }
+          })
+        }
+      })
+      // bonus for vote winner
+      var voteWinner = Gamedata.findOne({ room_id: roomId, votedFor: { $ne: "" } }, {$sort: { roundVotesReceived : -1, finalAnswerTime : 1} })
+      if (typeof voteWinner !== "undefined") {
+        Gamedata.update(voteWinner._id, {
+          $inc: { roundWonBonus: roundBonus }
+        })
+      }
+      // bonus for speediest answer getting at least one vote
+      var speedWinner = Gamedata.findOne({ room_id: roomId, votedFor: { $ne: "" }  }, {$sort: { roundVotesReceived : { $ne: 0 }, finalAnswerTime : 1} })
+      if (typeof speedWinner !== "undefined") {
+        Gamedata.update(speedWinner._id, {
+          $inc: { roundSpeedBonus: 2 }
+        })
+      }
+      // bonus for players voting for winner
+      if (typeof voteWinner !== "undefined") {
+        Gamedata.find({room_id: roomId, votedFor: voteWinner.user_id}).fetch().forEach(function(gamedata) {
+          if (typeof gamedata !== "undefined") {
+            Gamedata.update(gamedata._id, {
+              $inc: { roundVotedForWinner: 1 }
+            })
+          }
+        })
+      }
+      // total the points
+      Gamedata.find({room_id: roomId}).fetch().forEach(function(gamedata) {
+        var totalpoints = gamedata.roundVotesReceived + gamedata.roundWonBonus + gamedata.roundSpeedBonus + gamedata.roundVotedForWinner
+        if (typeof gamedata !== "undefined") {
+          Gamedata.update(gamedata._id, {
+            $inc: { roundTotalPoints: totalpoints,
+                    score: totalpoints }
+          })
+        }
+      })
+
       if (currentRound === roundsToPlay) {
         Meteor.setTimeout(function() {
           if (Gamedata.find({room_id: roomId}).fetch().length < 2) { // end game after results if not enough players
@@ -190,7 +234,7 @@ Meteor.methods({
             $set: { showResults: false}
           })
           resultsTimerStatus = "Results complete"
-        }, 2200000); //22000
+        }, 22000); //22000
       }
       Meteor.setTimeout(function() {
         Games.update({room_id: roomId}, {
