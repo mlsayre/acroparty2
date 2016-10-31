@@ -347,6 +347,13 @@ button.answerSend {
 .answerItem span {
   vertical-align: bottom;
 }
+.voteStatus {
+  text-align: center;
+}
+.haveVoted {
+  display: none;
+  color: green;
+}
 
 .resultsTitle {
   font-size: 26px;

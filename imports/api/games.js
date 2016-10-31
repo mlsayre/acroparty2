@@ -66,6 +66,16 @@ Meteor.methods({
         roundcategories: acroCatArray,
         roundtimes: roundTimes
       });
+      Gamedata.update({room_id: roomId}, {
+        $set: { answer: "",
+                votedFor: "",
+                roundVotesReceived: 0,
+                roundWonBonus: 0,
+                roundSpeedBonus: 0,
+                roundVotedForWinner: 0,
+                roundTotalPoints: 0,
+                score: 0 },
+      }, { multi: true } );
       Rooms.update({room_id: roomId}, {
         $set: { round: 1 , subround: "Get ready" },
       });

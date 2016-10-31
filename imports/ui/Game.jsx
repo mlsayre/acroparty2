@@ -92,6 +92,18 @@ export class Game extends Component {
     ));
   }
 
+  showVotedAnswer() {
+    if (Gamedata.findOne({room_id: gameRoomIdSelected.get()})) {
+             if (Gamedata.findOne({room_id: gameRoomIdSelected.get(), user_id: this.props.usergamedata.votedFor})) {
+              return Gamedata.findOne({room_id: gameRoomIdSelected.get(), user_id: this.props.usergamedata.votedFor}).answer
+             } else {
+              return ""
+             }
+           } else {
+             return ""
+           }
+  }
+
   showResults() {
     return this.props.gamedataresults.map((result, index) => (
       <Results key={result._id} answer={result.answer} username={result.user_id} votesrec={result.roundVotesReceived}
@@ -158,6 +170,13 @@ export class Game extends Component {
           } else {
             $(".voteTitle").show().removeClass("flipOutX").addClass("zoomIn");
             $(".voteArea").css("visibility", "hidden");
+          }
+          if (this.props.usergamedata.votedFor === "") {
+            $(".haveNotVoted").show();
+            $(".haveVoted").hide();
+          } else {
+            $(".haveNotVoted").hide();
+            $(".haveVoted").show();
           }
         } else if (currentSubround === "Results") {
           $(".gamestate").hide();
@@ -238,7 +257,8 @@ export class Game extends Component {
             </div>
           </div>
           <div className="gameBottom">
-
+            <div className="voteStatus haveNotVoted">You have not voted yet...</div>
+            <div className="voteStatus haveVoted">You voted for "{this.showVotedAnswer()}".</div>
           </div>
         </div>
         <div className="gamestate results">
@@ -293,8 +313,9 @@ export default createContainer(() => {
     gameInfo: Games.findOne({room_id: gameRoomIdSelected.get()}) ? Games.findOne({room_id: gameRoomIdSelected.get()}) : "",
     gamedata: Gamedata.find({room_id: gameRoomIdSelected.get()}).fetch(),
     gamedataanswered: Gamedata.find( { room_id: gameRoomIdSelected.get(), answer: { $ne: "" } } ).fetch(),
-    ransortgamedata: Gamedata.find({ room_id: gameRoomIdSelected.get(), user_id: { $ne: Meteor.user() ? Meteor.user().username : "" } }, {$sort: { randomSorting : 1} }).fetch(),
-    gamedataresults: Gamedata.find({ room_id: gameRoomIdSelected.get(), answer: { $ne: "" } }, {$sort: { roundTotalPoints : -1, finalAnswerTime : 1} }).fetch(),
+    ransortgamedata: Gamedata.find({ room_id: gameRoomIdSelected.get(), answer: { $ne: "" }, user_id: { $ne: Meteor.user() ? Meteor.user().username : "" } }, {$sort: { randomSorting : 1} }).fetch(),
+    gamedataresults: Gamedata.find({ room_id: gameRoomIdSelected.get(), answer: { $ne: "" } }, { sort: { roundTotalPoints : -1 } }).fetch(),
+    usergamedata: Gamedata.findOne({ room_id: gameRoomIdSelected.get(), user_id: Meteor.user() ? Meteor.user().username : ""})
   };
 }, Game);
 
