@@ -117,7 +117,7 @@ export class Game extends Component {
       var currentRound = this.props.selectedRoom.round;
       var currentSubround = this.props.selectedRoom.subround;
       if (currentSubround === "Waiting for players") {
-        if (this.props.gamedata.length < 2) { // number of players needed to start game
+        if (this.props.gamedata.length < 3) { // number of players needed to start game
           $(".gamestate").hide();
           $(".waitingForPlayers").show();
         } else {
@@ -274,18 +274,22 @@ export class Game extends Component {
             </div>
             <div className="resultsArea">
               <table>
-                <tr className="resultItem resultsTitles">
-                  <th className="resultPlace"></th>
-                  <th className="resultUsername">Player</th>
-                  <th className="resultAnswer">Acro</th>
-                  <th className="resultAnswerTime">Time</th>
-                  <th className="resultVotesRec">Vts</th>
-                  <th className="resultWinBonus">WB</th>
-                  <th className="resultFastest">SB</th>
-                  <th className="resultVoteWinner">VfW</th>
-                  <th className="resultTotalPoints">Total</th>
-                </tr>
-                { this.showResults() }
+                <thead>
+                  <tr className="resultItem resultsTitles">
+                    <th className="resultPlace"></th>
+                    <th className="resultUsername">Player</th>
+                    <th className="resultAnswer">Acro</th>
+                    <th className="resultAnswerTime">Time</th>
+                    <th className="resultVotesRec">Vts</th>
+                    <th className="resultWinBonus">WB</th>
+                    <th className="resultFastest">SB</th>
+                    <th className="resultVoteWinner">VfW</th>
+                    <th className="resultTotalPoints">Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  { this.showResults() }
+                </tbody>
               </table>
             </div>
           </div>
@@ -313,7 +317,7 @@ export default createContainer(() => {
     gameInfo: Games.findOne({room_id: gameRoomIdSelected.get()}) ? Games.findOne({room_id: gameRoomIdSelected.get()}) : "",
     gamedata: Gamedata.find({room_id: gameRoomIdSelected.get()}).fetch(),
     gamedataanswered: Gamedata.find( { room_id: gameRoomIdSelected.get(), answer: { $ne: "" } } ).fetch(),
-    ransortgamedata: Gamedata.find({ room_id: gameRoomIdSelected.get(), answer: { $ne: "" }, user_id: { $ne: Meteor.user() ? Meteor.user().username : "" } }, {$sort: { randomSorting : 1} }).fetch(),
+    ransortgamedata: Gamedata.find({ room_id: gameRoomIdSelected.get(), answer: { $ne: "" }, user_id: { $ne: Meteor.user() ? Meteor.user().username : "" } }, {sort: { randomSorting : 1} }).fetch(),
     gamedataresults: Gamedata.find({ room_id: gameRoomIdSelected.get(), answer: { $ne: "" } }, { sort: { roundTotalPoints : -1 } }).fetch(),
     usergamedata: Gamedata.findOne({ room_id: gameRoomIdSelected.get(), user_id: Meteor.user() ? Meteor.user().username : ""})
   };
