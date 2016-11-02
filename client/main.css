@@ -355,6 +355,11 @@ button.answerSend {
   color: green;
 }
 
+.resultWinner {
+  text-align: center;
+  margin-bottom: 6px;
+  font-size: 24px;
+}
 .resultsTitle {
   font-size: 26px;
   text-align: center;

@@ -51,6 +51,17 @@ export class Results extends Component {
   }
 }
 
+export class FinalResults extends Component {
+  render() {
+    return (<tr className="resultItem">
+              <td className="resultPlace">{this.props.place}</td>
+              <td className="resultUsername">{this.props.username}</td>
+              <td className="resultTotalPoints">{this.props.score}</td>
+            </tr>
+    );
+  }
+}
+
 export class Game extends Component {
   sendAnswer(event) {
     event.preventDefault();
@@ -112,6 +123,12 @@ export class Game extends Component {
     ));
   }
 
+  showFinalResults() {
+    return this.props.finalStandings.map((result, index) => (
+      <FinalResults key={result._id} username={result.user_id} score={result.score} place={index + 1} />
+    ));
+  }
+
   render() {
     if (this.props.selectedRoom) {
       var currentRound = this.props.selectedRoom.round;
@@ -165,10 +182,10 @@ export class Game extends Component {
             $(".gameTimer").css("visibility", "hidden");
           }
           if (this.props.gameInfo.showAnswersForVote === true) {
-            $(".voteTitle").removeClass("zoomIn").addClass("flipOutX").hide(800);
+            $(".voteTitle").hide();
             $(".voteArea").css("visibility", "visible");
           } else {
-            $(".voteTitle").show().removeClass("flipOutX").addClass("zoomIn");
+            $(".voteTitle").show();
             $(".voteArea").css("visibility", "hidden");
           }
           if (this.props.usergamedata.votedFor === "") {
@@ -183,16 +200,23 @@ export class Game extends Component {
           $(".results").show();
           Meteor.call('games.results', gameRoomIdSelected.get());
           if (this.props.gameInfo.showResults === true) {
-            $(".resultsTitle").removeClass("zoomIn").addClass("flipOutX").hide(800);
+            $(".resultsTitle").hide();
             $(".resultsArea").css("visibility", "visible");
           } else {
-            $(".resultsTitle").show().removeClass("flipOutX").addClass("zoomIn");
+            $(".resultsTitle").show();
             $(".resultsArea").css("visibility", "hidden");
           }
         } else if (currentSubround === "Final results") {
           $(".gamestate").hide();
           $(".finalresults").show();
           Meteor.call('games.finalresults', gameRoomIdSelected.get());
+          if (this.props.gameInfo.showResults === true) {
+            $(".resultsTitle").hide();
+            $(".resultsArea").css("visibility", "visible");
+          } else {
+            $(".resultsTitle").show();
+            $(".resultsArea").css("visibility", "hidden");
+          }
         }
       }
     }
@@ -273,6 +297,7 @@ export class Game extends Component {
               Round {this.props.selectedRoom ? this.props.selectedRoom.round : ""} results!
             </div>
             <div className="resultsArea">
+              <div className="resultWinner">Winner: {this.props.voteWinner ? this.props.voteWinner.user_id : ""}!</div>
               <table>
                 <thead>
                   <tr className="resultItem resultsTitles">
@@ -298,7 +323,35 @@ export class Game extends Component {
           </div>
         </div>
         <div className="gamestate finalresults">
-          Final game results!
+          <div className="gameTop">
+            <div className="roundInfo">
+              Final Results
+            </div>
+          </div>
+          <div className="gameMiddle">
+            <div className="resultsTitle animated">
+              And the winner is...
+            </div>
+            <div className="resultsArea">
+              <div className="resultWinner">Winner:
+                {this.props.finalStandings[0] ? this.props.finalStandings[0].score !== this.props.finalStandings[1].score ? this.props.finalStandings[0].user_id : "Tie!" : ""}!</div>
+              <table>
+                <thead>
+                  <tr className="resultItem resultsTitles">
+                    <th className="resultPlace"></th>
+                    <th className="resultUsername">Player</th>
+                    <th className="resultTotalPoints">Points</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  { this.showFinalResults() }
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div className="gameBottom">
+
+          </div>
         </div>
       </div>
 
@@ -319,7 +372,9 @@ export default createContainer(() => {
     gamedataanswered: Gamedata.find( { room_id: gameRoomIdSelected.get(), answer: { $ne: "" } } ).fetch(),
     ransortgamedata: Gamedata.find({ room_id: gameRoomIdSelected.get(), answer: { $ne: "" }, user_id: { $ne: Meteor.user() ? Meteor.user().username : "" } }, {sort: { randomSorting : 1} }).fetch(),
     gamedataresults: Gamedata.find({ room_id: gameRoomIdSelected.get(), answer: { $ne: "" } }, { sort: { roundTotalPoints : -1 } }).fetch(),
-    usergamedata: Gamedata.findOne({ room_id: gameRoomIdSelected.get(), user_id: Meteor.user() ? Meteor.user().username : ""})
+    usergamedata: Gamedata.findOne({ room_id: gameRoomIdSelected.get(), user_id: Meteor.user() ? Meteor.user().username : ""}),
+    voteWinner: Gamedata.find({ room_id: gameRoomIdSelected.get() }, { sort: { roundVotesReceived : -1, finalAnswerTime : 1} }).fetch()[0],
+    finalStandings: Gamedata.find({ room_id: gameRoomIdSelected.get() }, { sort: { score : -1} }).fetch()
   };
 }, Game);
 

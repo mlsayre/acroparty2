@@ -168,57 +168,62 @@ Meteor.methods({
 
   'games.results'(roomId) {
     if (resultsTimerStatus !== "Results running") { // one timer only
+      console.log("games.results running")
       resultsTimerStatus = "Results running"
       //tally votes, etc.
       var currentRound = Rooms.findOne({room_id: roomId}).round;
       var roundBonus = Games.findOne({room_id: roomId}).roundletters[currentRound - 1].length
-      var voteWinner;
-      var speedWinner;
+      var voteWinner = "";
+      var secondPlace = "";
+      var scoreUpdates = false;
       Gamedata.find({room_id: roomId}).fetch().forEach(function(gamedata, index, array) {
         if ( Gamedata.findOne({room_id: roomId, user_id: gamedata.votedFor})) {
           Gamedata.update({room_id: roomId, user_id: gamedata.votedFor, votedFor: { $ne: "" } }, {
             $inc: { roundVotesReceived: 1 }
-          }, function() {
-              voteWinner = Gamedata.find({ room_id: roomId }, { sort: { roundVotesReceived : -1, finalAnswerTime : 1} }).fetch()[0];
-              speedWinner = Gamedata.find({ room_id: roomId, roundVotesReceived : { $ne: 0 }  }, { sort: { finalAnswerTime : 1} }).fetch()[0];
           })
         }
-      })
-      // bonus for speediest answer getting at least one vote
-      if (typeof speedWinner !== "undefined") {
-        Gamedata.update(speedWinner._id, {
-          $inc: { roundSpeedBonus: 2 } // 2 points for fastest answer that got a vote
-        })
-      }
-
-
-      // bonus for vote winner
-      if (typeof voteWinner !== "undefined") {
-        Gamedata.update(voteWinner._id, {
-          $inc: { roundWonBonus: roundBonus }
-        })
-      }
-      // bonus for players voting for winner
-      if (typeof voteWinner !== "undefined") {
-        Gamedata.find({room_id: roomId, votedFor: voteWinner.user_id}).fetch().forEach(function(gamedata) {
-          if (typeof gamedata !== "undefined") {
-            Gamedata.update(gamedata._id, {
-              $inc: { roundVotedForWinner: 1 }
+        if (index === array.length - 1) {
+          if (scoreUpdates === false) {
+            voteWinner = Gamedata.find({ room_id: roomId }, { sort: { roundVotesReceived : -1, finalAnswerTime : 1} }).fetch()[0];
+            secondPlace = Gamedata.find({ room_id: roomId }, { sort: { roundVotesReceived : -1, finalAnswerTime : 1} }).fetch()[1];
+            // bonus for speediest answer getting at least one vote
+            var speedWinner = Gamedata.find({ room_id: roomId, roundVotesReceived : { $ne: 0 }  }, { sort: { finalAnswerTime : 1} }).fetch()[0];
+            if (typeof speedWinner !== "undefined") {
+              Gamedata.update(speedWinner._id, {
+                $inc: { roundSpeedBonus: 2 } // 2 points for fastest answer that got a vote
+              })
+            }
+            // bonus for vote winner
+            if (typeof voteWinner !== "undefined") {
+              Gamedata.update(voteWinner._id, {
+                $inc: { roundWonBonus: roundBonus }
+              })
+            }
+            // bonus for players voting for winner
+            if (typeof voteWinner !== "undefined" && voteWinner.roundVotesReceived !== secondPlace.roundVotesReceived) {
+              Gamedata.find({room_id: roomId, votedFor: voteWinner.user_id}).fetch().forEach(function(gamedata) {
+                if (typeof gamedata !== "undefined") {
+                  Gamedata.update(gamedata._id, {
+                    $inc: { roundVotedForWinner: 1 }
+                  })
+                }
+              })
+            }
+            // total the points
+            Gamedata.find({room_id: roomId}).fetch().forEach(function(gamedata) {
+              var totalpoints = gamedata.roundVotesReceived + gamedata.roundWonBonus + gamedata.roundSpeedBonus + gamedata.roundVotedForWinner
+              if (typeof gamedata !== "undefined") {
+                Gamedata.update(gamedata._id, {
+                  $inc: { roundTotalPoints: totalpoints,
+                          score: totalpoints }
+                })
+              }
             })
+            scoreUpdates = true;
           }
-        })
-      }
-
-      // total the points
-      Gamedata.find({room_id: roomId}).fetch().forEach(function(gamedata) {
-        var totalpoints = gamedata.roundVotesReceived + gamedata.roundWonBonus + gamedata.roundSpeedBonus + gamedata.roundVotedForWinner
-        if (typeof gamedata !== "undefined") {
-          Gamedata.update(gamedata._id, {
-            $inc: { roundTotalPoints: totalpoints,
-                    score: totalpoints }
-          })
         }
       })
+
 
 
       if (currentRound === roundsToPlay) {
@@ -235,7 +240,7 @@ Meteor.methods({
             $set: { showResults: false}
           })
           resultsTimerStatus = "Results complete"
-        }, 22000); //22000
+        }, 26000); //26000
       } else {
         Meteor.setTimeout(function() {
           if (Gamedata.find({room_id: roomId}).fetch().length < 3) { // end game after results if not enough players
@@ -251,7 +256,7 @@ Meteor.methods({
             $set: { showResults: false}
           })
           resultsTimerStatus = "Results complete"
-        }, 22000); //22000
+        }, 26000); //22000
       }
       Meteor.setTimeout(function() {
         Games.update({room_id: roomId}, {
@@ -272,8 +277,16 @@ Meteor.methods({
           Games.remove({ room_id: roomId });
           Meteor.call('games.init', roomId );
         }
+        Games.update({room_id: roomId}, {
+          $set: { showResults: false}
+        })
         finalTimerStatus = "Final complete"
-      }, 8000); //25000
+      }, 30000); //30000
+      Meteor.setTimeout(function() {
+        Games.update({room_id: roomId}, {
+          $set: { showResults: true}
+        })
+      }, 2000);
     }
   },
 
