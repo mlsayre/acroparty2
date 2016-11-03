@@ -123,6 +123,18 @@ export class Game extends Component {
     ));
   }
 
+  showWinnerName() {
+    if (this.props.voteWinner && this.props.secondWinner) {
+      if (this.props.voteWinner.roundTotalPoints !== this.props.secondWinner.roundTotalPoints) {
+        return this.props.voteWinner.user_id
+      } else {
+        return "Tie"
+      }
+    } else {
+      return ""
+    }
+  }
+
   showFinalResults() {
     return this.props.finalStandings.map((result, index) => (
       <FinalResults key={result._id} username={result.user_id} score={result.score} place={index + 1} />
@@ -297,7 +309,7 @@ export class Game extends Component {
               Round {this.props.selectedRoom ? this.props.selectedRoom.round : ""} results!
             </div>
             <div className="resultsArea">
-              <div className="resultWinner">Winner: {this.props.voteWinner ? this.props.voteWinner.user_id : ""}!</div>
+              <div className="resultWinner">Winner: {this.showWinnerName()}!</div>
               <table>
                 <thead>
                   <tr className="resultItem resultsTitles">
@@ -370,9 +382,10 @@ export default createContainer(() => {
     gamedata: Gamedata.find({room_id: gameRoomIdSelected.get()}).fetch(),
     gamedataanswered: Gamedata.find( { room_id: gameRoomIdSelected.get(), answer: { $ne: "" } } ).fetch(),
     ransortgamedata: Gamedata.find({ room_id: gameRoomIdSelected.get(), answer: { $ne: "" }, user_id: { $ne: Meteor.user() ? Meteor.user().username : "" } }, {sort: { randomSorting : 1} }).fetch(),
-    gamedataresults: Gamedata.find({ room_id: gameRoomIdSelected.get(), answer: { $ne: "" } }, { sort: { roundTotalPoints : -1 } }).fetch(),
+    gamedataresults: Gamedata.find({ room_id: gameRoomIdSelected.get() }, { sort: { roundTotalPoints : -1 } }).fetch(),
     usergamedata: Gamedata.findOne({ room_id: gameRoomIdSelected.get(), user_id: Meteor.user() ? Meteor.user().username : ""}),
-    voteWinner: Gamedata.find({ room_id: gameRoomIdSelected.get() }, { sort: { roundVotesReceived : -1, finalAnswerTime : 1} }).fetch()[0],
+    voteWinner: Gamedata.find({ room_id: gameRoomIdSelected.get() }, { sort: { roundTotalPoints : -1 } }).fetch()[0],
+    secondWinner: Gamedata.find({ room_id: gameRoomIdSelected.get() }, { sort: { roundTotalPoints : -1 } }).fetch()[1],
     finalStandings: Gamedata.find({ room_id: gameRoomIdSelected.get() }, { sort: { score : -1} }).fetch()
   };
 }, Game);

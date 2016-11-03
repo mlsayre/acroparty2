@@ -203,9 +203,11 @@ Meteor.methods({
             }
             // bonus for vote winner
             if (typeof voteWinner !== "undefined") {
-              Gamedata.update(voteWinner._id, {
-                $inc: { roundWonBonus: roundBonus }
-              })
+              if (voteWinner.roundVotesReceived !== 0) {
+                Gamedata.update(voteWinner._id, {
+                  $inc: { roundWonBonus: roundBonus }
+                })
+              }
             }
             // bonus for players voting for winner
             if (typeof voteWinner !== "undefined") {
@@ -351,7 +353,7 @@ function timer(seconds, roomId, statetoactivate) {
 
     function tock() {
       count=count-1;
-      if (count =< 0) {
+      if (count < 0) {
          Meteor.clearInterval(counter);
          Games.update({room_id: roomId}, {
             $set: { showAnswerForm: false,
