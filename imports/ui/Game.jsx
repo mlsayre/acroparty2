@@ -333,8 +333,7 @@ export class Game extends Component {
               And the winner is...
             </div>
             <div className="resultsArea">
-              <div className="resultWinner">Winner:
-                {this.props.finalStandings[0] ? this.props.finalStandings[0].score !== this.props.finalStandings[1].score ? this.props.finalStandings[0].user_id : "Tie!" : ""}!</div>
+              <div className="resultWinner">Congratulations!</div>
               <table>
                 <thead>
                   <tr className="resultItem resultsTitles">

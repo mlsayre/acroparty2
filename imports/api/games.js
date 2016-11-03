@@ -83,7 +83,9 @@ Meteor.methods({
   },
 
   'games.getready'(roomId) {
-    if (readyTimerStatus !== "Ready running") { // one timer only
+    if (readyTimerStatus !== "Ready running" && playTimerStatus !== "Play running"
+        && voteTimerStatus !== "Vote running" && resultsTimerStatus !== "Results running"
+        && finalTimerStatus !== "Final running") { // one timer only
       readyTimerStatus = "Ready running"
       Meteor.setTimeout(function() {
         if (Gamedata.find({room_id: roomId}).fetch().length === 0) {
@@ -108,7 +110,9 @@ Meteor.methods({
   },
 
   'games.play'(roomId, roundtime) {
-    if (playTimerStatus !== "Play running") { // one timer only
+    if (readyTimerStatus !== "Ready running" && playTimerStatus !== "Play running"
+        && voteTimerStatus !== "Vote running" && resultsTimerStatus !== "Results running"
+        && finalTimerStatus !== "Final running") { // one timer only
       playTimerStatus = "Play running"
       Games.update({room_id: roomId}, {
         $set: { turnLetters: true }
@@ -143,7 +147,9 @@ Meteor.methods({
   },
 
   'games.vote'(roomId) {
-    if (voteTimerStatus !== "Vote running") { // one timer only
+    if (readyTimerStatus !== "Ready running" && playTimerStatus !== "Play running"
+        && voteTimerStatus !== "Vote running" && resultsTimerStatus !== "Results running"
+        && finalTimerStatus !== "Final running") { // one timer only
       voteTimerStatus = "Vote running"
       Meteor.setTimeout(function() {
         if (Gamedata.find({room_id: roomId}).fetch().length === 0) {
@@ -157,7 +163,7 @@ Meteor.methods({
           $set: { voteStartVoting: false }
         })
         voteTimerStatus = "Vote complete"
-      }, 37000); //37000
+      }, 37500); //37000
       Games.update({room_id: roomId}, {
         $set: { voteStartVoting: true,
                 timerSeconds: 35 }
@@ -167,7 +173,9 @@ Meteor.methods({
   },
 
   'games.results'(roomId) {
-    if (resultsTimerStatus !== "Results running") { // one timer only
+    if (readyTimerStatus !== "Ready running" && playTimerStatus !== "Play running"
+        && voteTimerStatus !== "Vote running" && resultsTimerStatus !== "Results running"
+        && finalTimerStatus !== "Final running") { // one timer only
       console.log("games.results running")
       resultsTimerStatus = "Results running"
       //tally votes, etc.
@@ -200,7 +208,7 @@ Meteor.methods({
               })
             }
             // bonus for players voting for winner
-            if (typeof voteWinner !== "undefined" && voteWinner.roundVotesReceived !== secondPlace.roundVotesReceived) {
+            if (typeof voteWinner !== "undefined") {
               Gamedata.find({room_id: roomId, votedFor: voteWinner.user_id}).fetch().forEach(function(gamedata) {
                 if (typeof gamedata !== "undefined") {
                   Gamedata.update(gamedata._id, {
@@ -267,7 +275,9 @@ Meteor.methods({
   },
 
   'games.finalresults'(roomId) {
-    if (finalTimerStatus !== "Final running") { // one timer only
+    if (readyTimerStatus !== "Ready running" && playTimerStatus !== "Play running"
+        && voteTimerStatus !== "Vote running" && resultsTimerStatus !== "Results running"
+        && finalTimerStatus !== "Final running") { // one timer only
       finalTimerStatus = "Final running"
       Meteor.setTimeout(function() {
         if (Gamedata.find({room_id: roomId}).fetch().length < 3) { // end game after results if not enough players
@@ -292,7 +302,17 @@ Meteor.methods({
 
   'games.reset'(roomId) {
     Games.remove({ room_id: roomId });
-    Gamedata.remove({ room_id: roomId });
+    Gamedata.update({ room_id: roomId }, {
+      $set: {
+        answer: "",
+        votedFor: "",
+        roundVotesReceived: 0,
+        roundWonBonus: 0,
+        roundSpeedBonus: 0,
+        roundVotedForWinner: 0,
+        roundTotalPoints: 0,
+        score: 0 }
+      }, { multi: true });
     Rooms.update({room_id: roomId}, {
       $set: { round: 0,
               subround: "Waiting for players" },
@@ -331,7 +351,7 @@ function timer(seconds, roomId, statetoactivate) {
 
     function tock() {
       count=count-1;
-      if (count < 0) {
+      if (count =< 0) {
          Meteor.clearInterval(counter);
          Games.update({room_id: roomId}, {
             $set: { showAnswerForm: false,
