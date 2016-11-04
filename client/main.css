@@ -338,6 +338,12 @@ button.answerSend {
   padding: 6px;
   background: rgba(210, 244, 249, 0.6);
 }
+.voteCategory {
+  text-align: middle;
+  margin: 6px 0 8px;
+  font-style: italic;
+  color: red;
+}
 .answerItem {
   margin: 8px 4px;
 }

@@ -289,6 +289,9 @@ export class Game extends Component {
           <div className="gameMiddle">
             <div className="voteTitle animated">Time to vote!</div>
             <div className="voteArea">
+              <div className="voteCategory">
+                ({this.props.gameInfo ? this.props.gameInfo.roundcategories[currentRound - 1] : ""})
+              </div>
               { this.showChoices() }
             </div>
           </div>
