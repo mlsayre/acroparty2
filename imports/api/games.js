@@ -74,7 +74,8 @@ Meteor.methods({
                 roundSpeedBonus: 0,
                 roundVotedForWinner: 0,
                 roundTotalPoints: 0,
-                score: 0 },
+                score: 0,
+                finalAnswerTime: "" },
       }, { multi: true } );
       Rooms.update({room_id: roomId}, {
         $set: { round: 1 , subround: "Get ready" },
@@ -104,7 +105,8 @@ Meteor.methods({
                 roundWonBonus: 0,
                 roundSpeedBonus: 0,
                 roundVotedForWinner: 0,
-                roundTotalPoints: 0 },
+                roundTotalPoints: 0,
+                finalAnswerTime: "" },
       }, { multi: true } );
     }
   },
@@ -313,7 +315,8 @@ Meteor.methods({
         roundSpeedBonus: 0,
         roundVotedForWinner: 0,
         roundTotalPoints: 0,
-        score: 0 }
+        score: 0,
+        finalAnswerTime: "" }
       }, { multi: true });
     Rooms.update({room_id: roomId}, {
       $set: { round: 0,
@@ -353,6 +356,12 @@ function timer(seconds, roomId, statetoactivate) {
 
     function tock() {
       count=count-1;
+      if (count === 80 || count === 70 || count === 60 || count === 50 || count === 40 || count === 35 ||
+          count === 30 || count === 25 || count === 20 || count === 15 || count === 10 || count === 5) {
+        Games.update({room_id: roomId}, {
+          $set: { timerSeconds: count }
+        })
+      }
       if (count < 0) {
          Meteor.clearInterval(counter);
          Games.update({room_id: roomId}, {
@@ -361,9 +370,6 @@ function timer(seconds, roomId, statetoactivate) {
           })
          return;
       }
-      Games.update({room_id: roomId}, {
-        $set: { timerSeconds: count }
-      })
     }
   }, 2000);
 }

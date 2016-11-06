@@ -1,6 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import { createContainer } from 'meteor/react-meteor-data';
+import { playtimerflag } from './App.jsx'
 import { gameRoomIdSelected } from './App.jsx'
 import {validateAnswer} from '/client/utilities.js';
 
@@ -162,6 +163,7 @@ export class Game extends Component {
           $(".submittedInfo").text("")
           $(".answerEnter").val("");
           $(".allLetters").hide();
+          $(".allLetters span").css("visibility", "hidden");
           Meteor.call('games.getready', gameRoomIdSelected.get(), );
         } else if (currentSubround === "Play") {
           $(".gamestate").hide();
@@ -169,8 +171,18 @@ export class Game extends Component {
           var roundSeconds = this.props.gameInfo.roundtimes[currentRound - 1];
           Meteor.call('games.play', gameRoomIdSelected.get(), roundSeconds);
           if (this.props.gameInfo.turnLetters === true) {
-            $(".allLetters span").addClass("animated flipInY");
-            $(".allLetters").show();
+            $(".allLetters").show()
+            $(".letter1").css("visibility", "visible").animateRotate(360, 800, function() {
+              $(".letter2").css("visibility", "visible").animateRotate(360, 800, function() {
+                $(".letter3").css("visibility", "visible").animateRotate(360, 800, function() {
+                  $(".letter4").css("visibility", "visible").animateRotate(360, 800, function() {
+                    $(".letter5").css("visibility", "visible").animateRotate(360, 800, function() {
+                      $(".letter6").css("visibility", "visible").animateRotate(360, 800);
+                    })
+                  })
+                })
+              })
+            })
           } else {
             $(".allLetters span").removeClass("animated flipInY");
           }
@@ -181,6 +193,15 @@ export class Game extends Component {
           }
           if (this.props.gameInfo.showAnswerForm === true) {
             $(".answerForm").css("visibility", "visible");
+            if (playtimerflag.get() !== "playrunning") {
+              playtimerflag.set("playrunning");
+              $(".timeshow").animate({width: "0%"}, (this.props.gameInfo ? this.props.gameInfo.timerSeconds : 0)*1000, "linear", function() {
+                setTimeout(function() {
+                  $(".timeshow").animate({width: "100%"}, 100, "linear");
+                  playtimerflag.set("playcomplete")
+                }, 1000)
+              })
+            }
           } else {
             $(".answerForm").css("visibility", "hidden").val("");
           }
@@ -196,6 +217,15 @@ export class Game extends Component {
           if (this.props.gameInfo.showAnswersForVote === true) {
             $(".voteTitle").hide();
             $(".voteArea").css("visibility", "visible");
+            if (playtimerflag.get() !== "playrunning") {
+              playtimerflag.set("playrunning");
+              $(".timeshow").animate({width: "0%"}, (this.props.gameInfo ? this.props.gameInfo.timerSeconds : 0)*1000, "linear", function() {
+                setTimeout(function() {
+                  $(".timeshow").animate({width: "100%"}, 100, "linear");
+                  playtimerflag.set("playcomplete")
+                }, 1000)
+              })
+            }
           } else {
             $(".voteTitle").show();
             $(".voteArea").css("visibility", "hidden");
@@ -255,7 +285,13 @@ export class Game extends Component {
               Round {this.props.selectedRoom ? this.props.selectedRoom.round : ""} of&nbsp;
               {this.props.gameInfo ? this.props.gameInfo.roundletters.length : ""}
             </div>
-            <div className="gameTimer">{this.props.gameInfo ? this.props.gameInfo.timerSeconds : 0}</div>
+            <div className="gameTimer">
+              <div className="timebar">
+                <div className="timeshow">
+                </div>
+              </div>
+              <span className="showSeconds">{this.props.gameInfo ? this.props.gameInfo.timerSeconds : 0}</span>
+            </div>
           </div>
           <div className="gameMiddle">
             <div className="numberSubmitted">{this.props.gamedataanswered ? this.props.gamedataanswered.length : "0"} of&nbsp;
@@ -284,7 +320,13 @@ export class Game extends Component {
               Round {this.props.selectedRoom ? this.props.selectedRoom.round : ""} of&nbsp;
               {this.props.gameInfo ? this.props.gameInfo.roundletters.length : ""}
             </div>
-            <div className="gameTimer">{this.props.gameInfo ? this.props.gameInfo.timerSeconds : 0}</div>
+            <div className="gameTimer">
+              <div className="timebar">
+                <div className="timeshow">
+                </div>
+              </div>
+              <span className="showSeconds">{this.props.gameInfo ? this.props.gameInfo.timerSeconds : 0}</span>
+            </div>
           </div>
           <div className="gameMiddle">
             <div className="voteTitle animated">Time to vote!</div>

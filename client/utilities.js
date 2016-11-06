@@ -41,3 +41,17 @@ export function timer(seconds, container) {
     }
   }, 4000);
 }
+
+$.fn.animateRotate = function(angle, duration, easing, complete) {
+  var args = $.speed(duration, easing, complete);
+  var step = args.step;
+  return this.each(function(i, e) {
+    args.complete = $.proxy(args.complete, e);
+    args.step = function(now) {
+      $.style(e, 'transform', 'rotateY(' + now + 'deg)');
+      if (step) return step.apply(e, arguments);
+    };
+
+    $({deg: 0}).animate({deg: angle}, args);
+  });
+};

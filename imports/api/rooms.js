@@ -25,6 +25,7 @@ Meteor.methods({
         roundVotedForWinner: 0,
         roundTotalPoints: 0,
         score: 0 ,
+        finalAnswerTime: ""
       });
     }
   },

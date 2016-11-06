@@ -3,6 +3,7 @@ import AccountsUIWrapper from './AccountsUIWrapper.jsx';
 import { createContainer } from 'meteor/react-meteor-data';
 import { ReactiveVar } from 'meteor/reactive-var';
 export var gameRoomIdSelected = new ReactiveVar("");
+export var playtimerflag = new ReactiveVar("");
 
 import { Rooms } from '../api/rooms.js';
 import { Chats } from '../api/chats.js';
@@ -33,6 +34,7 @@ export class App extends Component {
   gotoRoom(e) {
     var theroom = $(e.target).attr("data-room")
     gameRoomIdSelected.set(theroom);
+    playtimerflag.set("playcomplete")
     var roomToJoin =  Rooms.findOne({ room_id: theroom })
     Meteor.call('rooms.addPlayer', gameRoomIdSelected.get(), this.props.currentUser.username)
     $(".mainScreen, .popup").hide();
