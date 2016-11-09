@@ -132,7 +132,7 @@ Meteor.methods({
         Games.update({room_id: roomId}, {
           $set: { playStartAnswering: false }
         })
-      }, (roundtime * 1000) + (numberOfLetters * 1000) + 5000);
+      }, (roundtime * 1000) + (numberOfLetters * 800) + 5000);
       Meteor.setTimeout(function() {
         Games.update({room_id: roomId}, {
           $set: { playStartAnswering: true,
